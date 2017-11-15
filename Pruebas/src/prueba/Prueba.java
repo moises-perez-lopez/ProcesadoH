@@ -27,8 +27,8 @@ public class Prueba {
 
 	public static void main(String[] args) {
 
-		String sCarpetaEntrada = "C:\\Users\\Moises\\Downloads\\Murdoc\\HuaweiParser\\SALIDA_2G_PRUEBA_BD\\";
-		String sCarpetaSalida = "C:\\Users\\Moises\\Downloads\\Murdoc\\HuaweiParser\\SALIDA_2G_TXT\\";
+		String sCarpetaEntrada = "C:\\Users\\antonio\\Desktop\\IS2\\murdoc\\HuaweiParser\\SALIDA_2G\\";
+		String sCarpetaSalida = "C:\\Users\\antonio\\Desktop\\IS2\\murdoc\\HuaweiParser\\SALIDA_2G_FICHEROS_SALIDA\\";
 
 		// Creo mapa con fichero GCELL
 		File ficheroGCELL = new File(sCarpetaEntrada + "GCELL.txt");
@@ -38,7 +38,7 @@ public class Prueba {
 		File ficheroGCELLFreq = new File(sCarpetaEntrada + "GCELLFREQ.txt");
 		creaArbolGCELLconBCCH(ficheroGCELLFreq);
 
-		// A馻dimos al mapa GCELL nuevos registros desde el fichero GEXT2GCELL
+		// A帽adimos al mapa GCELL nuevos registros desde el fichero GEXT2GCELL
 		File ficheroGEXT2GCELL = new File(sCarpetaEntrada + "GEXT2GCELL.txt");
 		creaArbolGCELL_GEXT2GCELL(ficheroGEXT2GCELL);
 
@@ -62,12 +62,15 @@ public class Prueba {
 		borraFichero(ficheroGSM_BTSRET);
 
 		// Creamos el fichero GSM_BTSRETDEVICEDATA
-		// File ficheroGSM_BTSRETDEVICEDATA = new
-		// File(sCarpetaEntrada+"BTSRETDEVICEDATA.txt");
-		// crearArbolGSM_BTSRETDEVICEDATA(ficheroGSM_BTSRETDEVICEDATA);
-		// escribeFicheroGSM_BTSRETDEVICEDATA(ficheroSalida_GSM_BTSRET);
-		// borraFichero(ficheroGSM_BTSRETDEVICEDATA);
+		 File ficheroGSM_BTSRETDEVICEDATA = new File(sCarpetaEntrada+"BTSRETDEVICEDATA.txt");
+		 File ficheroSalida_GSM_BTSRETDEVICEDATA = new File(sCarpetaSalida+"BTSRETDEVICEDATA.txt");
+		 escribeFicheroGSM_BTSRETDEVICEDATA(crearArbolGSM_BTSRETDEVICEDATA(ficheroGSM_BTSRETDEVICEDATA),ficheroSalida_GSM_BTSRETDEVICEDATA);
+		 borraFichero(ficheroGSM_BTSRETDEVICEDATA);
 
+		// Creamos el fichero GSM_BTSRETSUBUNIT
+		 File ficheroGSM_BTSRETSUBUNIT = new File(sCarpetaEntrada+"BTSRETSUBUNIT.txt");
+		 File ficheroSalida_GSM_BTSRETSUBUNIT = new File(sCarpetaSalida+"BTSRETSUBUNIT.txt");
+		 escribeFicheroGSM_BTSRETSUBUNIT(crearArbolGSM_BTSRETSUBUNIT(ficheroGSM_BTSRETSUBUNIT),ficheroSalida_GSM_BTSRETSUBUNIT);
 		System.out.println("FIN");
 	}
 
@@ -78,7 +81,7 @@ public class Prueba {
 			TreeMap<String, Integer> mapaCabeceraFicheroGCELL = retornaMapaCabecera(sCabeceraFichero);
 			String sValoresParametros = br.readLine();
 			while (sValoresParametros != null) {
-				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, "\t");
+				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
 				if (!mapaGCELLCellIdParametroValor
 						.containsKey(aValoresParametros[mapaCabeceraFicheroGCELL.get(sBSC)])) {
 					mapaGCELLCellIdParametroValor.put(aValoresParametros[mapaCabeceraFicheroGCELL.get(sBSC)],
@@ -106,11 +109,11 @@ public class Prueba {
 			}
 
 		} catch (FileNotFoundException e) {
-			System.out.println("File Not Found Exception");
+			System.out.println("File Not Found Exception MapaGCELL");
 		} catch (IOException e) {
-			System.out.println("IOException");
+			System.out.println("IOException MapaGCELL");
 		} catch (Exception e) {
-			System.out.println("Otra excepci髇");
+			System.out.println("Otra excepci贸n MapaGCELL");
 		}
 		return mapaGCELLCellIdParametroValor;
 	}
@@ -140,8 +143,12 @@ public class Prueba {
 				sValoresParametros = br.readLine();
 
 			}
+		} catch (FileNotFoundException e) {
+			System.out.println("File Not Found Exception GCELL con BCCH");
 		} catch (IOException e) {
-			System.out.println("IOException");
+			System.out.println("IO Exception GCELL con BCCH");
+		} catch (Exception e){
+			System.out.println("Otra excepci贸n GCELL con BCCH");
 		}
 		return mapaGCELLCellIdParametroValor;
 	}
@@ -182,11 +189,11 @@ public class Prueba {
 				sValoresParametros = br.readLine();
 			}
 		} catch (FileNotFoundException e) {
-			System.out.println("File Not Found Exception");
+			System.out.println("File Not Found Exception GCELL_GEXT2GCELL");
 		} catch (IOException e) {
-			System.out.println("IOException");
+			System.out.println("IOException GCELL_GEXT2GCELL");
 		} catch (Exception e) {
-			System.out.println("Otra excepci髇");
+			System.out.println("Otra excepci贸n GCELL_GEXT2GCELL");
 		}
 		return mapaGCELLCellIdParametroValor;
 	}
@@ -217,15 +224,19 @@ public class Prueba {
 				}
 				sValoresParametros = br.readLine();
 			}
+		} catch (FileNotFoundException e) {
+			System.out.println("File Not found creaArbolGSMBTS");
 		} catch (IOException e) {
-			System.out.println("IOException");
+			System.out.println("IO Exception creaArbolGSMBTS");
+		} catch (Exception e){
+			System.out.println("Otra excepci贸n creaArbolGSMBTS");
 		}
 		return mapaGSMBTS;
 	}
 
 	private static void escribeFicheroBTS(File ficheroGSM_BTS) {
 		File fichero_Salida_BTS = new File(
-				"C:\\Users\\Moises\\Downloads\\Murdoc\\HuaweiParser\\SALIDA_2G_TXT\\BTS.txt");
+				"C:\\Users\\antonio\\Desktop\\IS2\\murdoc\\HuaweiParser\\SALIDA_2G_FICHEROS_SALIDA\\BTS.txt");
 		try (FileReader fr = new FileReader(ficheroGSM_BTS);
 				BufferedReader br = new BufferedReader(fr);
 				BufferedWriter bw = new BufferedWriter(new FileWriter(fichero_Salida_BTS))) {
@@ -251,11 +262,11 @@ public class Prueba {
 				sValoresParametros = br.readLine();
 			}
 		} catch (FileNotFoundException e) {
-			System.out.println("File Not Found Exception");
+			System.out.println("File Not Found Exception escribeFicheroBTS");
 		} catch (IOException e) {
-			System.out.println("IOException");
+			System.out.println("IOException escribeFicheroBTS");
 		} catch (Exception e) {
-			System.out.println("Otra excepci髇");
+			System.out.println("Otra excepci贸n escribeFicheroBTS");
 		}
 	}
 
@@ -293,11 +304,11 @@ public class Prueba {
 			}
 
 		} catch (FileNotFoundException e) {
-			System.out.println("File Not Found Exception");
+			System.out.println("File Not Found Exception GCELLFINAL");
 		} catch (IOException e) {
-			System.out.println("IOException");
+			System.out.println("IOException GCELLFINAL");
 		} catch (Exception e) {
-			System.out.println("Otra excepci髇");
+			System.out.println("Otra excepci贸n GCELLFINAL");
 		}
 	}
 
@@ -309,7 +320,6 @@ public class Prueba {
 			String sCabeceraFichero = br.readLine();
 			TreeMap<String, Integer> mapaCabeceraFicheroGSMBTSRET = retornaMapaCabecera(sCabeceraFichero);
 			String sValoresParametros = br.readLine();
-			int i=0;
 			while (sValoresParametros != null) {
 				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
 				
@@ -318,7 +328,6 @@ public class Prueba {
 								.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBTSId)]))) {
 					sNombreBTS = mapaGSMBTS.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBSC)])
 							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBTSId)]).firstKey();
-					i++;
 				}
 				
 				if (!mapaGSMBTSRET.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBSC)])) {
@@ -375,13 +384,12 @@ public class Prueba {
 
 				sValoresParametros = br.readLine();
 			}
-			System.out.println("el valor de i : "+i);
 		} catch (FileNotFoundException e) {
-			System.out.println("File Not Found Exception");
+			System.out.println("File Not Found Exception creaArbolGSM_BTSRET");
 		} catch (IOException e) {
-			System.out.println("IOException");
+			System.out.println("IOException creaArbolGSM_BTSRET");
 		} catch (Exception e) {
-			System.out.println("Otra excepci髇");
+			System.out.println("Otra excepci贸n creaArbolGSM_BTSRET");
 		}
 		return mapaGSMBTSRET;
 
@@ -389,10 +397,12 @@ public class Prueba {
 
 	private static void escribeFicheroGSM_BTSRET(File ficheroSalida_GSM_BTSRET) {
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroSalida_GSM_BTSRET))) {
+			StrBuilder compositorCabecera = new StrBuilder();
 			for (String sParametro : retornaParametrosCabeceraGSM_BTSRET()) {
-				bw.write(sParametro + "\t");
+				compositorCabecera.append(sParametro);
+				compositorCabecera.appendSeparator(",");
 			}
-			bw.write("\r\n");
+			bw.write(compositorCabecera.toString().substring(0,compositorCabecera.size()-1)+"\r\n");
 			for (String sNeid : mapaGSMBTSRET.keySet()) {
 				for (String sBTSId : mapaGSMBTSRET.get(sNeid).keySet()) {
 					for (String sBTSName : mapaGSMBTSRET.get(sNeid).get(sBTSId).keySet()) {
@@ -423,16 +433,16 @@ public class Prueba {
 			}
 
 		} catch (FileNotFoundException e) {
-			System.out.println("File Not Found Exception");
+			System.out.println("File Not Found Exception escribeFicheroGSM_BTSRET");
 		} catch (IOException e) {
-			System.out.println("IOException");
+			System.out.println("IOException escribeFicheroGSM_BTSRET");
 		} catch (Exception e) {
-			System.out.println("Otra excepci髇");
+			System.out.println("Otra excepci贸n escribeFicheroGSM_BTSRET");
 		}
 
 	}
 
-	private static void crearArbolGSM_BTSRETDEVICEDATA(File ficheroGSM_BTSRETDEVICEDATA) {
+	private static TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>>> crearArbolGSM_BTSRETDEVICEDATA(File ficheroGSM_BTSRETDEVICEDATA) {
 		TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>>> arbolBTSDEVICEDATA = new TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>>>();
 		String[] aParametrosGSM_BTSRETDEVICEDATA = retornaParametrosABuscarGSMRETDEVICEDATA();
 		String sNombreBTS = "---";
@@ -443,47 +453,308 @@ public class Prueba {
 			String sValoresParametros = br.readLine();
 			while (sValoresParametros != null) {
 				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
-				if (!arbolBTSDEVICEDATA
-						.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)])) {
-					arbolBTSDEVICEDATA.put(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)],
-							new TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>>());
-				}
-				if (!arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)])
-						.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)])) {
-					arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)]).put(
-							aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)],
-							new TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>());
-				}
-				if ((mapaGSMBTS != null) && (mapaGSMBTS.size() > 0)
-						&& (mapaGSMBTS
-								.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)]))
+				if ((mapaGSMBTS.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)]))
 						&& (mapaGSMBTS.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)])
-								.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)]))
-						&& (mapaGSMBTS.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)])
-								.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)])
-								.size() == 1)) {
+								.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)]))) {
+					
 					sNombreBTS = mapaGSMBTS.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)])
 							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)]).firstKey();
-					arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)])
-							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)])
-							.put(sNombreBTS, new TreeMap<String, TreeMap<String, TreeMap<String, String>>>());
+				
 				}
-
+				if(!arbolBTSDEVICEDATA.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)])){
+					arbolBTSDEVICEDATA.put(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)], new TreeMap<String,TreeMap<String,TreeMap<String,TreeMap<String,TreeMap<String,String>>>>>());
+				}
+				if(!arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)])
+					.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)])){
+					
+						arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)])
+						.put(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)], new TreeMap<String,TreeMap<String,TreeMap<String,TreeMap<String,String>>>>());
+				}
+				if(!arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)])
+						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)])
+						.containsKey(sNombreBTS)){
+					
+					arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)])
+					.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)])
+					.put(sNombreBTS, new TreeMap<String,TreeMap<String, TreeMap<String,String>>>());
+				}
+				
+				if((mapaGSMBTSRET.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)]))
+						&&(mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)])
+								.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)]))
+						&&(mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)])
+								.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)])
+								.containsKey(sNombreBTS))
+						&&(mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)])
+								.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)])
+								.get(sNombreBTS).containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sDeviceNo)]))){
+					
+					sDeviceName=mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)])
+							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)])
+							.get(sNombreBTS).get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sDeviceNo)]).firstKey();
+				}
+				
+				if(!arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)])
+						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)])
+						.get(sNombreBTS)
+						.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sDeviceNo)])){
+					
+					arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)])
+					.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)])
+					.get(sNombreBTS)
+					.put(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sDeviceNo)], new TreeMap<String,TreeMap<String,String>>());
+					
+				}
+				
+				if(!arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)])
+						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)])
+						.get(sNombreBTS)
+						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sDeviceNo)])
+						.containsKey(sDeviceName)){
+				
+					arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)])
+					.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)])
+					.get(sNombreBTS)
+					.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sDeviceNo)])
+					.put(sDeviceName, new TreeMap<String,String>());
+					
+				}
+				for (String sParametro : aParametrosGSM_BTSRETDEVICEDATA) {
+					if (!arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)])
+							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)])
+							.get(sNombreBTS)
+							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sDeviceNo)])
+							.get(sDeviceName)
+							.containsKey(sParametro)) {
+						arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBSC)])
+								.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)])
+								.get(sNombreBTS)
+								.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sDeviceNo)])
+								.get(sDeviceName)
+								.put(sParametro, aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sParametro)]);
+					}
+				}
+				sValoresParametros = br.readLine();
 			}
+			
 		} catch (FileNotFoundException e) {
-			System.out.println("File Not Found Exception");
+			System.out.println("File Not Found Exception crearArbolGSM_BTSRETDEVICEDATA");
 		} catch (IOException e) {
-			System.out.println("IOException");
+			System.out.println("IOException crearArbolGSM_BTSRETDEVICEDATA");
 		} catch (Exception e) {
-			System.out.println("Otra excepci髇");
+			System.out.println("Otra excepci贸n crearArbolGSM_BTSRETDEVICEDATA");
+		}
+		return arbolBTSDEVICEDATA;
+	}
+
+	private static void escribeFicheroGSM_BTSRETDEVICEDATA(
+			TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>>> arbolGSMBTSRETDEVICE,
+			File ficheroSalida_GSM_BRSRETDEVICEDATA) {
+	
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroSalida_GSM_BRSRETDEVICEDATA))) {
+			StrBuilder compositorCabecera = new StrBuilder();
+			for (String sParametro : retornaParametrosCabeceraGSM_BTSRETDEVICEDATA()) {
+				compositorCabecera.append(sParametro);
+				compositorCabecera.appendSeparator(",");
+			}
+			bw.write(compositorCabecera.toString().substring(0,compositorCabecera.size()-1)+"\r\n");
+			for (String sNeid : arbolGSMBTSRETDEVICE.keySet()) {
+				for (String sBTSId : arbolGSMBTSRETDEVICE.get(sNeid).keySet()) {
+					for (String sBTSName : arbolGSMBTSRETDEVICE.get(sNeid).get(sBTSId).keySet()) {
+						for (String sDeviceNo : arbolGSMBTSRETDEVICE.get(sNeid).get(sBTSId).get(sBTSName).keySet()) {
+							for (String sDeviceName : arbolGSMBTSRETDEVICE.get(sNeid).get(sBTSId).get(sBTSName).get(sDeviceNo)
+									.keySet()) {
+								StrBuilder compositorValores = new StrBuilder();
+								compositorValores.append(sNeid);
+								compositorValores.appendSeparator(",");
+								compositorValores.append(sBTSId);
+								compositorValores.appendSeparator(",");
+								compositorValores.append(sBTSName);
+								compositorValores.appendSeparator(",");
+								compositorValores.append(sDeviceNo);
+								compositorValores.appendSeparator(",");
+								compositorValores.append(sDeviceName);
+								compositorValores.appendSeparator(",");
+								for (String sParametro : arbolGSMBTSRETDEVICE.get(sNeid).get(sBTSId).get(sBTSName)
+										.get(sDeviceNo).get(sDeviceName).keySet()) {
+								
+									compositorValores.append(arbolGSMBTSRETDEVICE.get(sNeid).get(sBTSId).get(sBTSName).get(sDeviceNo).get(sDeviceName).get(sParametro));
+									compositorValores.appendSeparator(",");
+								}
+								bw.write(compositorValores.toString().substring(0, compositorValores.size()-1)+"\r\n");
+								
+							}
+						}
+					}
+				}
+			}
+
+		} catch (FileNotFoundException e) {
+			System.out.println("File Not Found Exception escribeFicheroGSM_BTSRETDEVICEDATA");
+		} catch (IOException e) {
+			System.out.println("IOException escribeFicheroGSM_BTSRETDEVICEDATA");
+		} catch (Exception e) {
+			System.out.println("Otra excepci贸n escribeFicheroGSM_BTSRETDEVICEDATA");
 		}
 	}
-
-	private static void escribeFicheroGSM_BTSRETDEVICEDATA(File ficheroGSM_BTSRETDEVICEDATA) {
-		// TODO Auto-generated method stub
-
+	
+	private static TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>>> crearArbolGSM_BTSRETSUBUNIT(File ficheroGSM_BTSRETSUBUNIT) {
+		TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>>> arbolBTSRETSUBUNIT = new TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>>>();
+		String[] aParametrosGSM_BTSRETSUBUNIT = retornaParametrosABuscarGSMRETSUBUNIT();
+		String sNombreBTS = "---";
+		String sDeviceName = "---";
+		try (FileReader fr = new FileReader(ficheroGSM_BTSRETSUBUNIT); BufferedReader br = new BufferedReader(fr)) {
+			String sCabeceraFichero = br.readLine();
+			TreeMap<String, Integer> mapaCabeceraFicheroGSMBTSRETSUBUNIT = retornaMapaCabecera(sCabeceraFichero);
+			String sValoresParametros = br.readLine();
+			while (sValoresParametros != null) {
+				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
+				if ((mapaGSMBTS.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBSC)]))
+						&& (mapaGSMBTS.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBSC)])
+								.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)]))) {
+					
+					sNombreBTS = mapaGSMBTS.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBSC)])
+							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)]).firstKey();
+				
+				}
+				if(!arbolBTSRETSUBUNIT.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBSC)])){
+					arbolBTSRETSUBUNIT.put(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBSC)], new TreeMap<String,TreeMap<String,TreeMap<String,TreeMap<String,TreeMap<String,String>>>>>());
+				}
+				if(!arbolBTSRETSUBUNIT.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBSC)])
+					.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)])){
+					
+					arbolBTSRETSUBUNIT.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBSC)])
+						.put(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)], new TreeMap<String,TreeMap<String,TreeMap<String,TreeMap<String,String>>>>());
+				}
+				if(!arbolBTSRETSUBUNIT.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBSC)])
+						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)])
+						.containsKey(sNombreBTS)){
+					
+					arbolBTSRETSUBUNIT.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBSC)])
+					.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)])
+					.put(sNombreBTS, new TreeMap<String,TreeMap<String, TreeMap<String,String>>>());
+				}
+				
+				if((mapaGSMBTSRET.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBSC)]))
+						&&(mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBSC)])
+								.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)]))
+						&&(mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBSC)])
+								.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)])
+								.containsKey(sNombreBTS))
+						&&(mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBSC)])
+								.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)])
+								.get(sNombreBTS).containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sDeviceNo)]))){
+					
+					sDeviceName=mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBSC)])
+							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)])
+							.get(sNombreBTS).get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sDeviceNo)]).firstKey();
+				}
+				
+				if(!arbolBTSRETSUBUNIT.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBSC)])
+						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)])
+						.get(sNombreBTS)
+						.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sDeviceNo)])){
+					
+					arbolBTSRETSUBUNIT.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBSC)])
+					.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)])
+					.get(sNombreBTS)
+					.put(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sDeviceNo)], new TreeMap<String,TreeMap<String,String>>());
+					
+				}
+				
+				if(!arbolBTSRETSUBUNIT.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBSC)])
+						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)])
+						.get(sNombreBTS)
+						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sDeviceNo)])
+						.containsKey(sDeviceName)){
+				
+					arbolBTSRETSUBUNIT.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBSC)])
+					.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)])
+					.get(sNombreBTS)
+					.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sDeviceNo)])
+					.put(sDeviceName, new TreeMap<String,String>());
+					
+				}
+				for (String sParametro : aParametrosGSM_BTSRETSUBUNIT) {
+					if (!arbolBTSRETSUBUNIT.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBSC)])
+							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)])
+							.get(sNombreBTS)
+							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sDeviceNo)])
+							.get(sDeviceName)
+							.containsKey(sParametro)) {
+						arbolBTSRETSUBUNIT.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBSC)])
+								.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)])
+								.get(sNombreBTS)
+								.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sDeviceNo)])
+								.get(sDeviceName)
+								.put(sParametro, aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sParametro)]);
+					}
+				}
+				sValoresParametros = br.readLine();
+			}
+			
+		} catch (FileNotFoundException e) {
+			System.out.println("File Not Found Exception crearArbolGSM_BTSRETSUBUNIT");
+		} catch (IOException e) {
+			System.out.println("IOException crearArbolGSM_BTSRETSUBUNIT");
+		} catch (Exception e) {
+			System.out.println("Otra excepci贸n crearArbolGSM_BTSRETSUBUNIT");
+		}
+		return arbolBTSRETSUBUNIT;
 	}
 
+	private static void escribeFicheroGSM_BTSRETSUBUNIT(
+			TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>>> arbolGSM_BTSRETSUBUNIT,
+			File ficheroSalida_GSM_BTSRETSUBUNIT) {
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroSalida_GSM_BTSRETSUBUNIT))) {
+			StrBuilder compositorCabecera = new StrBuilder();
+			for (String sParametro : retornaParametrosCabeceraGSM_BTSRETSUBUNIT()) {
+				compositorCabecera.append(sParametro);
+				compositorCabecera.appendSeparator(",");
+			}
+			bw.write(compositorCabecera.toString().substring(0,compositorCabecera.size()-1)+"\r\n");
+			for (String sNeid : arbolGSM_BTSRETSUBUNIT.keySet()) {
+				for (String sBTSId : arbolGSM_BTSRETSUBUNIT.get(sNeid).keySet()) {
+					for (String sBTSName : arbolGSM_BTSRETSUBUNIT.get(sNeid).get(sBTSId).keySet()) {
+						for (String sDeviceNo : arbolGSM_BTSRETSUBUNIT.get(sNeid).get(sBTSId).get(sBTSName).keySet()) {
+							for (String sDeviceName : arbolGSM_BTSRETSUBUNIT.get(sNeid).get(sBTSId).get(sBTSName).get(sDeviceNo)
+									.keySet()) {
+								StrBuilder compositorValores = new StrBuilder();
+								compositorValores.append(sNeid);
+								compositorValores.appendSeparator(",");
+								compositorValores.append(sBTSId);
+								compositorValores.appendSeparator(",");
+								compositorValores.append(sBTSName);
+								compositorValores.appendSeparator(",");
+								compositorValores.append(sDeviceNo);
+								compositorValores.appendSeparator(",");
+								compositorValores.append(sDeviceName);
+								compositorValores.appendSeparator(",");
+								for (String sParametro : arbolGSM_BTSRETSUBUNIT.get(sNeid).get(sBTSId).get(sBTSName)
+										.get(sDeviceNo).get(sDeviceName).keySet()) {
+								
+									compositorValores.append(arbolGSM_BTSRETSUBUNIT.get(sNeid).get(sBTSId).get(sBTSName).get(sDeviceNo).get(sDeviceName).get(sParametro));
+									compositorValores.appendSeparator(",");
+								}
+								bw.write(compositorValores.toString().substring(0, compositorValores.size()-1)+"\r\n");
+								
+							}
+						}
+					}
+				}
+			}
+
+		} catch (FileNotFoundException e) {
+			System.out.println("File Not Found Exception escribeFicheroGSM_BTSRETSUBUNIT");
+		} catch (IOException e) {
+			System.out.println("IOException escribeFicheroGSM_BTSRETSUBUNIT");
+		} catch (Exception e) {
+			System.out.println("Otra excepci贸n escribeFicheroGSM_BTSRETSUBUNIT");
+		}
+		
+	}
+
+	
 	private static String[] retornaParametrosABuscarGCELL() {
 		String[] aParametrosABuscar = { "CELLNAME", "CI", "BCC", "NCC", "LAC", "Fecha" };
 		return aParametrosABuscar;
@@ -506,6 +777,12 @@ public class Prueba {
 				"Fecha", "Red", "ipEntrada" };
 		return aParametrosABuscar;
 	}
+	
+	private static String[] retornaParametrosABuscarGSMRETSUBUNIT() {
+		String[] aParametrosABuscar = {"AER","CELLID","CONNCN1","CONNCN2","CONNPN1","CONNPN2","CONNSN1","CONNSN2","CONNSRN1",
+				"CONNSRN2","SUBUNITNO", "TILT", "Fecha", "Red", "ipEntrada"};
+		return aParametrosABuscar;
+	}
 
 	private static String[] retornaParametrosCabeceraGCELL() {
 		String[] aParametrosABuscar = { "BSC", "CELLID", "BCC", "BCCH", "CELLNAME", "Fecha", "LAC", "NCC" };
@@ -525,6 +802,18 @@ public class Prueba {
 		String[] aParametrosCabecera = { "ControllerName", "BTSID", "BTSNAME", "DEVICE", "DEVICENAME", "CTRLPORTCN",
 				"CTRLPORTNO", "CTRLPORTSN", "POLARTYPE", "RETTYPE", "SCENARIO", "SERIALNO", "VENDORCODE", "Fecha",
 				"Red", "ipEntrada" };
+		return aParametrosCabecera;
+	}
+	
+	private static String[] retornaParametrosCabeceraGSM_BTSRETDEVICEDATA() {
+		String[] aParametrosCabecera = { "ControllerName", "BTSID", "BTSNAME", "DEVICE", "DEVICENAME", "BAND1","BAND2", "BAND3", "BAND4",
+				"BEARING","SUBUNITNO","TILT", "SERIALNO", "Fecha", "Red", "ipEntrada"};
+		return aParametrosCabecera;	
+	}
+	
+	private static String[] retornaParametrosCabeceraGSM_BTSRETSUBUNIT(){
+		String[] aParametrosCabecera = {"ControllerName","BTSID","BTSNAME","DEVICE","DEVICENAME","AER","CELLID","CONNCN1","CONNCN2","CONNPN1",
+				"CONNPN2","CONNSN1","CONNSN2","CONNSRN1","CONNSRN2","SUBUNITNO","TILT","Fecha","Red","ipEntrada"};
 		return aParametrosCabecera;
 	}
 
