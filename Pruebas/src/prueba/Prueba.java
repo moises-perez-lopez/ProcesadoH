@@ -778,117 +778,6 @@ public class Prueba {
 		
 	}
 	
-	private static TreeMap<String,TreeMap<String,TreeMap<String,TreeMap<String,String>>>> creaArbolGSM_G2GNCELLAux(File ficheroGSM_G2GNCELL) {
-		TreeMap <String,TreeMap<String,TreeMap<String,TreeMap<String,String>>>> arbolG2GNCELL = new TreeMap<String,TreeMap<String,TreeMap<String,TreeMap<String,String>>>>();
-		TreeMap<String,String> arbolParametros = new TreeMap<String,String>();
-		String[] aParametrosGSM_G2GNCELL = retornaParametrosABuscarG2GNCELL();
-		for(String a: aParametrosGSM_G2GNCELL){
-			System.out.println(a);
-		}
-		int i =0;
-		String sRC2GNCELLNAME ="---";
-		String sNRC2GNCELLNAME ="---";
-		String sNCC = "---";
-		String sBCC = "---";
-		String sBCCH = "---";
-		String NBR2GBCCH = "---";
-		String NBR2GBCC = "---";
-		String NBR2GNCC = "---";
-		try (FileReader fr = new FileReader(ficheroGSM_G2GNCELL); BufferedReader br = new BufferedReader(fr)) {
-			String sCabeceraFichero = br.readLine();
-			TreeMap<String, Integer> mapaCabeceraFicheroGSMG2GNCELL = retornaMapaCabecera(sCabeceraFichero);
-			String sValoresParametros = br.readLine();
-			while (sValoresParametros != null) {
-				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
-				if(!arbolG2GNCELL.containsKey(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sBSC)])){
-					arbolG2GNCELL.put(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sBSC)], new TreeMap<String,TreeMap<String,TreeMap<String,String>>>());
-				}
-				if(!arbolG2GNCELL.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sBSC)])
-					.containsKey(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIdSource)])){
-					arbolG2GNCELL.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sBSC)])
-						.put(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIdSource)], new TreeMap<String,TreeMap<String,String>>());
-				}
-				if(!arbolG2GNCELL.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sBSC)])
-						.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIdSource)])
-						.containsKey(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIdNeigh)])){
-						arbolG2GNCELL.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sBSC)])
-							.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIdSource)])
-							.put(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIdNeigh)],new TreeMap<String,String>());
-				}		
-				
-				if(mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sBSC)])
-						.containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIdSource)]))){
-					sRC2GNCELLNAME=mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sBSC)])
-							.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIdSource)]))
-							.firstKey();
-				}
-				if(mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sBSC)])
-						.containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIdNeigh)]))){
-					sNRC2GNCELLNAME=mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sBSC)])
-							.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIdNeigh)]))
-							.firstKey();
-				}
-				if(!sRC2GNCELLNAME.equalsIgnoreCase("---")){
-					if(mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sBSC)])
-							.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIdSource)]))
-							.containsKey(sRC2GNCELLNAME)){
-						sNCC=mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sBSC)])
-								.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIdSource)]))
-								.get("NCC");
-						sBCC=mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sBSC)])
-								.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIdSource)]))
-								.get("BCC");
-						sBCCH=mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sBSC)])
-								.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIdSource)]))
-								.get("BCCH");
-					}
-				}	
-				if(!sNRC2GNCELLNAME.equalsIgnoreCase("---")){
-					if(mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sBSC)])
-							.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIdSource)]))
-							.containsKey(sNRC2GNCELLNAME)){
-						NBR2GNCC=mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sBSC)])
-								.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIdSource)]))
-								.get("NCC");
-						NBR2GBCC=mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sBSC)])
-								.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIdSource)]))
-								.get("BCC");
-						NBR2GBCCH=mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sBSC)])
-								.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIdSource)]))
-								.get("BCCH");
-					}
-				}
-				for (String sParametro : aParametrosGSM_G2GNCELL){
-					if(!arbolParametros.containsKey(sParametro)){
-						arbolParametros.put(sParametro, aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sParametro)]);
-					}
-				}
-				arbolParametros.put("sRC2GNCELLNAME",sRC2GNCELLNAME);
-				arbolParametros.put("NCC",sNCC);
-				arbolParametros.put("BCC",sBCC);
-				arbolParametros.put("BCCH",sBCCH);
-				arbolParametros.put("NBR2GNCELLNAME",sRC2GNCELLNAME);
-				arbolParametros.put("NBR2GNCC",NBR2GNCC);
-				arbolParametros.put("NBR2GBCC",NBR2GBCC);
-				arbolParametros.put("NBR2GBCCH",NBR2GBCCH);
-					
-				arbolG2GNCELL.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sBSC)])
-						.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIdSource)])
-						.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIdNeigh)])
-						.putAll(arbolParametros);
-				
-				sValoresParametros = br.readLine();
-				i++;
-				System.out.println(i);
-			}
-			
-		} catch (FileNotFoundException e) {
-			System.out.println("File Not Found Exception crearArbolGSM_G2GNCELL");
-		} catch (IOException e) {
-			System.out.println("IOException crearArbolGSM_G2GNCELL");
-		} 
-		return arbolG2GNCELL;
-	}
 	
 	private static void creaArbolGSM_G2GNCELL(File ficheroGSM_G2GNCELL, File ficheroSalidaGSM_G2GNCELL) {
 		TreeMap <String,TreeMap<String,TreeMap<String,String>>> arbolG2GNCELL = new TreeMap<String,TreeMap<String,TreeMap<String,String>>>();
@@ -902,7 +791,6 @@ public class Prueba {
 		String NBR2GBCCH = "---";
 		String NBR2GBCC = "---";
 		String NBR2GNCC = "---";
-		int i =0;
 		try (FileReader fr = new FileReader(ficheroGSM_G2GNCELL); BufferedReader br = new BufferedReader(fr);
 				BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroSalidaGSM_G2GNCELL)) ){
 			String sCabeceraFichero = br.readLine();
@@ -1008,8 +896,7 @@ public class Prueba {
 					}
 				}
 				escribirFicheroGSM_G2GNCELL(bw,arbolMapaValor);
-				sValoresParametros = br.readLine();
-				
+				sValoresParametros = br.readLine();	
 			}
 			
 		} catch (FileNotFoundException e) {
