@@ -8,34 +8,41 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.TreeMap;
 
 import org.IS2.Nikola.UtilidadesTexto;
 import org.apache.commons.lang3.text.StrBuilder;
 
 public class Prueba {
-	public final static String sNeid = "NEID";
-	public final static String sCellIndex = "CELLID";
-	public final static String sCellId = "CELLID";
-	public final static String sCellName = "CELLNAME";
-	public final static String sFecha = "Fecha";
-	public final static String sEXT2GCellIndex = "EXT2GCELLID";
-	public final static String sBTSId = "BTSID";
-	public final static String sBTSNAME = "BTSNAME";
-	public final static String sDeviceNo = "DEVICENO";
-	public final static String sDeviceName = "DEVICENAME";
-	public final static String sCellIndexSource = "SRC2GNCELLID";
-	public final static String sCellIndexNeigh = "NBR2GNCELLID";
-	public final static String sCELL2GBA1BCCH = "CELL2GBA1BCCH";
+	private final static String sControllerName = "ControllerName";
+	private final static String sNeid = "NEID";
+	private final static String sBSC_SOURCE = "BSC_SOURCE";
+	private final static String sCellIndex = "CELLID";
+	private final static String sCellId = "CELLID";
+	private final static String sCellName = "CELLNAME";
+	private final static String sFecha = "Fecha";
+	private final static String sEXT2GCellIndex = "EXT2GCELLID";
+	private final static String sEXT3GCellIndex = "EXT3GCELLID";
+	private final static String sBTSId = "BTSID";
+	private final static String sBTSNAME = "BTSNAME";
+	private final static String sDeviceNo = "DEVICENO";
+	private final static String sDeviceName = "DEVICENAME";
+	private final static String sEXTLTECELLID = "EXTLTECELLID";
+	private final static String sCellIndexSource = "SRC2GNCELLID";
+	private final static String sCellIndexNeigh = "NBR2GNCELLID";
+	private final static String sSRCLTENCELLNAME = "SRCLTENCELLNAME";
+	private final static String sNBRLTENCELLNAME = "NBRLTENCELLNAME";
+	private final static String sTRXID = "TRXID";
 	private static TreeMap<String, TreeMap<Integer, TreeMap<String, String>>> mapaGCELLCellIdParametroValor = new TreeMap<String, TreeMap<Integer, TreeMap<String, String>>>();
 	private static TreeMap<String, TreeMap<String, TreeMap<String, String>>> mapaGSMBTS;
 	private static TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String,String>>>> mapaGSMBTSRET;
+	private static TreeMap<String, TreeMap<Integer, TreeMap<String, String>>> mapaGSMLTE;
+	private static TreeMap<String, TreeMap<String, TreeMap<String,String>>> mapaGSMGTRX;
 
 	public static void main(String[] args) {
 
 		String sCarpetaEntradaT = "C:\\Users\\Moises\\Downloads\\Murdoc\\HuaweiParser\\SALIDA_2G_PRUEBA_BD\\";
-		String sCarpetaSalidaT = "C:\\Users\\Moises\\Downloads\\Murdoc\\HuaweiParser\\SALIDA_2G_TXT\\";
+		String sCarpetaSalidaT = "C:\\Users\\Moises\\Downloads\\Murdoc\\HuaweiParser\\SALIDA_2G_TXT_PRUEBAFINAL\\";
 
 		String sCarpetaEntradaCasa = "C:\\Users\\antonio\\Desktop\\IS2\\murdoc\\HuaweiParser\\SALIDA_2G\\";
 		String sCarpetaSalidaCasa = "C:\\Users\\antonio\\Desktop\\IS2\\murdoc\\HuaweiParser\\SALIDA_2G_FICHEROS_SALIDA\\";
@@ -58,247 +65,252 @@ public class Prueba {
 
 		// Creamos el fichero GSM_BTS
 		File ficheroGSM_BTS = new File(sCarpetaEntradaT + "BTS.txt");
-		File ficheroArbolGSM_BTS = new File(sCarpetaSalidaT + "Arbol_BTS.txt");
-		File ficheroSalida_GSM_BTS = new File(sCarpetaSalidaT + "BTS.txt");
+		File ficheroArbolGSM_BTS = new File(sCarpetaSalidaT + "Arbol_BTS_Salida.txt");
+		File ficheroSalida_GSM_BTS = new File(sCarpetaSalidaT + "BTS_Salida.txt");
 		creaArbolGSMBTS(ficheroGSM_BTS);
 		escribeArbolBTS(ficheroArbolGSM_BTS);
-//		escribeFicheroBTS(ficheroGSM_BTS, ficheroSalida_GSM_BTS);
 		escribeFicheroGSMBTS(ficheroGSM_BTS,ficheroSalida_GSM_BTS,retornaParametrosABuscarBTS(),
 				retornaParametrosCabeceraGSM_BTS());
 		borraFichero(ficheroGSM_BTS);
 
 		// Creamos el fichero GSM_BTSRET
 		File ficheroGSM_BTSRET = new File(sCarpetaEntradaT + "BTSRET.txt");
-		File ficheroSalida_GSM_BTSRET = new File(sCarpetaSalidaT + "BTSRET.txt");
+		File ficheroArbolGSM_BTSRET = new File(sCarpetaSalidaT + "Arbol_BTSRET_Salida.txt");
+		File ficheroSalida_GSM_BTSRET = new File(sCarpetaSalidaT + "BTSRET_Salida.txt");
 		creaArbolGSM_BTSRET(ficheroGSM_BTSRET);
-		escribeFicheroGSMBTSRET(ficheroSalida_GSM_BTSRET,ficheroSalida_GSM_BTSRET,retornaParametrosABuscarBTSRET(),
+		escribeArbolBTSRET(ficheroArbolGSM_BTSRET);
+		escribeFicheroGSMBTSRET(ficheroGSM_BTSRET,ficheroSalida_GSM_BTSRET,retornaParametrosABuscarBTSRET(),
 				retornaParametrosCabeceraGSM_BTSRET());
 		borraFichero(ficheroGSM_BTSRET);
 
 		// Creamos el fichero GSM_BTSRETDEVICEDATA
 		File ficheroGSM_BTSRETDEVICEDATA = new File(sCarpetaEntradaT + "BTSRETDEVICEDATA.txt");
-		File ficheroSalida_GSM_BTSRETDEVICEDATA = new File(sCarpetaSalidaT + "BTSRETDEVICEDATA.txt");
-		escribeFicheroGSM_BTSRETDEVICEDATA(ficheroGSM_BTSRETDEVICEDATA,ficheroSalida_GSM_BTSRETDEVICEDATA,
-				retornaParametrosABuscarBTSDEVICEDATA, retornaParametrosCabeceraGSM_BTSDEVICEDATA);
+		File ficheroSalida_GSM_BTSRETDEVICEDATA = new File(sCarpetaSalidaT + "BTSRETDEVICEDATA_Salida.txt");
+		escribeFicheroGSM_BTSRETDEVICEDATA_SUBUNIT(ficheroGSM_BTSRETDEVICEDATA,ficheroSalida_GSM_BTSRETDEVICEDATA,
+				retornaParametrosABuscarBTSDEVICEDATA(), retornaParametrosCabeceraGSM_BTSDEVICEDATA());
 		borraFichero(ficheroGSM_BTSRETDEVICEDATA);
 
 		// Creamos el fichero GSM_BTSRETSUBUNIT
 		File ficheroGSM_BTSRETSUBUNIT = new File(sCarpetaEntradaT + "BTSRETSUBUNIT.txt");
-		File ficheroSalida_GSM_BTSRETSUBUNIT = new File(sCarpetaSalidaT + "BTSRETSUBUNIT.txt");
-		escribeFicheroGSM_BTSRETSUBUNIT(ficheroGSM_BTSRETSUBUNIT,ficheroSalida_GSM_BTSRETSUBUNIT,
-				retornaParametrosABuscarBTSRETSUBUNIT, retornaParametrosCabeceraGSM_BTSRETSUBUNIT);
+		File ficheroSalida_GSM_BTSRETSUBUNIT = new File(sCarpetaSalidaT + "BTSRETSUBUNIT_Salida.txt");
+		escribeFicheroGSM_BTSRETDEVICEDATA_SUBUNIT(ficheroGSM_BTSRETSUBUNIT,ficheroSalida_GSM_BTSRETSUBUNIT,
+				retornaParametrosABuscarBTSRETSUBUNIT(),retornaParametrosCabeceraGSM_BTSRETSUBUNIT());
 		borraFichero(ficheroGSM_BTSRETSUBUNIT);
 
 		// Creamos el fichero G2GNCELL
-		// File ficheroGSM_G2GNCELL = new File(sCarpetaEntradaT+"G2GNCELL.txt");
-		// File ficheroSalida_GSM_G2GNCELL = new
-		// File(sCarpetaSalidaT+"G2GNCELL.txt");
-		// escribeFicheroGSM_G2GNCELL(ficheroGSM_G2GNCELL,ficheroSalida_GSM_G2GNCELL);
-		// borraFichero(ficheroGSM_G2GNCELL);
+		File ficheroGSM_G2GNCELL = new File(sCarpetaEntradaT+"G2GNCELL.txt");
+		File ficheroSalida_GSM_G2GNCELL = new
+		File(sCarpetaSalidaT+"G2GNCELL.txt");
+		escribeFicheroGSM_G2GNCELL(ficheroGSM_G2GNCELL,ficheroSalida_GSM_G2GNCELL);
+		borraFichero(ficheroGSM_G2GNCELL);
 
 		// Creamos el fichero GCELL2GBA1
 		File ficheroGSM_GCELL2GBA1 = new File(sCarpetaEntradaT + "GCELL2GBA1.txt");
-		File ficheroSalida_GSM_GCELL2GBA1 = new File(sCarpetaSalidaT + "GCELL2GBA1.txt");
+		File ficheroSalida_GSM_GCELL2GBA1 = new File(sCarpetaSalidaT + "GCELL2GBA1_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELL2GBA1, ficheroSalida_GSM_GCELL2GBA1, retornaParametrosABuscarGCELL2GBA1(),
 				retornaParametrosCabeceraGSM_GCELL2GBA1());
 
 		// Creamos el fichero GCELLAMRQUL
 		File ficheroGSM_GCELLAMRQUL = new File(sCarpetaEntradaT + "GCELLAMRQUL.txt");
-		File ficheroSalida_GSM_GCELLAMRQUL = new File(sCarpetaSalidaT + "GCELLAMRQUL.txt");
+		File ficheroSalida_GSM_GCELLAMRQUL = new File(sCarpetaSalidaT + "GCELLAMRQUL_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLAMRQUL, ficheroSalida_GSM_GCELLAMRQUL, retornaParametrosABuscarGCELLAMRQUL(),
 				retornaParametrosCabeceraGSM_GCELLAMRQUL());
 
 		// Creamos el fichero GCELLBASICPARA
 		File ficheroGSM_GCELLBASICPARA = new File(sCarpetaEntradaT + "GCELLBASICPARA.txt");
-		File ficheroSalida_GSM_GCELLBASICPARA = new File(sCarpetaSalidaT + "GCELLBASICPARA.txt");
+		File ficheroSalida_GSM_GCELLBASICPARA = new File(sCarpetaSalidaT + "GCELLBASICPARA_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLBASICPARA, ficheroSalida_GSM_GCELLBASICPARA,
 				retornaParametrosABuscarGCELLBASICPARA(), retornaParametrosCabeceraGSM_GCELLBASICPARA());
 
 		// Creamos el fichero GCELLCCAD
 		File ficheroGSM_GCELLCCAD = new File(sCarpetaEntradaT + "GCELLCCAD.txt");
-		File ficheroSalida_GSM_GCELLCCAD = new File(sCarpetaSalidaT + "GCELLCCAD.txt");
+		File ficheroSalida_GSM_GCELLCCAD = new File(sCarpetaSalidaT + "GCELLCCAD_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLCCAD, ficheroSalida_GSM_GCELLCCAD, retornaParametrosABuscarGCELLCCAD(),
 				retornaParametrosCabeceraGSM_GCELLCCAD());
 
 		// Creamos el fichero GCELLCCBASIC
 		File ficheroGSM_GCELLCCBASIC = new File(sCarpetaEntradaT + "GCELLCCBASIC.txt");
-		File ficheroSalida_GSM_GCELLCCBASIC = new File(sCarpetaSalidaT + "GCELLCCBASIC.txt");
+		File ficheroSalida_GSM_GCELLCCBASIC = new File(sCarpetaSalidaT + "GCELLCCBASIC_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLCCBASIC, ficheroSalida_GSM_GCELLCCBASIC,
 				retornaParametrosABuscarGCELLCCBASIC(), retornaParametrosCabeceraGSM_GCELLCCBASIC());
 
 		// Creamos el fichero GCELLCCCH
 		File ficheroGSM_GCELLCCCH = new File(sCarpetaEntradaT + "GCELLCCCH.txt");
-		File ficheroSalida_GSM_GCELLCCCH = new File(sCarpetaSalidaT + "GCELLCCCH.txt");
+		File ficheroSalida_GSM_GCELLCCCH = new File(sCarpetaSalidaT + "GCELLCCCH_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLCCCH, ficheroSalida_GSM_GCELLCCCH, retornaParametrosABuscarGCELLCCCH(),
 				retornaParametrosCabeceraGSM_GCELLCCCH());
 
 		// Creamos el fichero GCELLCCUTRANSYS
 		File ficheroGSM_GCELLCCUTRANSYS = new File(sCarpetaEntradaT + "GCELLCCUTRANSYS.txt");
-		File ficheroSalida_GSM_GCELLCCUTRANSYS = new File(sCarpetaSalidaT + "GCELLCCUTRANSYS.txt");
+		File ficheroSalida_GSM_GCELLCCUTRANSYS = new File(sCarpetaSalidaT + "GCELLCCUTRANSYS_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLCCUTRANSYS, ficheroSalida_GSM_GCELLCCUTRANSYS,
 				retornaParametrosABuscarGCELLCCUTRANSYS(), retornaParametrosCabeceraGSM_GCELLCCUTRANSYS());
 
 		// Creamos el fichero GCELLCHMGAD
 		File ficheroGSM_GCELLCHMGAD = new File(sCarpetaEntradaT + "GCELLCHMGAD.txt");
-		File ficheroSalida_GSM_GCELLCHMGAD = new File(sCarpetaSalidaT + "GCELLCHMGAD.txt");
+		File ficheroSalida_GSM_GCELLCHMGAD = new File(sCarpetaSalidaT + "GCELLCHMGAD_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLCHMGAD, ficheroSalida_GSM_GCELLCHMGAD, retornaParametrosABuscarGCELLCHMGAD(),
 				retornaParametrosCabeceraGSM_GCELLCHMGAD());
 
 		// Creamos el fichero GCELLCHMGBASIC
 		File ficheroGSM_GCELLCHMGBASIC = new File(sCarpetaEntradaT + "GCELLCHMGBASIC.txt");
-		File ficheroSalida_GSM_GCELLCHMGBASIC = new File(sCarpetaSalidaT + "GCELLCHMGBASIC.txt");
+		File ficheroSalida_GSM_GCELLCHMGBASIC = new File(sCarpetaSalidaT + "GCELLCHMGBASIC_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLCHMGBASIC, ficheroSalida_GSM_GCELLCHMGBASIC,
 				retornaParametrosABuscarGCELLCHMGBASIC(), retornaParametrosCabeceraGSM_GCELLCHMGBASIC());
 
 		// Creamos el fichero GCELLFREQ
 		File ficheroGSM_GCELLFREQ = new File(sCarpetaEntradaT + "GCELLFREQ.txt");
-		File ficheorSalida_GSM_GCELLFREQ = new File(sCarpetaSalidaT + "GCELLFREQ.txt");
+		File ficheorSalida_GSM_GCELLFREQ = new File(sCarpetaSalidaT + "GCELLFREQ_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLFREQ, ficheorSalida_GSM_GCELLFREQ, retornaParametrosABuscarGCELLFREQ(),
 				retornaParametrosCabeceraGSM_GCELLFREQ());
 
 		// Creamos el fichero GCELLGPRS
 		File ficheroGSM_GCELLGPRS = new File(sCarpetaEntradaT + "GCELLGPRS.txt");
-		File ficheroSalida_GSM_GCELLGPRS = new File(sCarpetaSalidaT + "GCELLGPRS.txt");
+		File ficheroSalida_GSM_GCELLGPRS = new File(sCarpetaSalidaT + "GCELLGPRS_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLGPRS, ficheroSalida_GSM_GCELLGPRS, retornaParametrosABuscarGCELLGPRS(),
 				retornaParametrosCabeceraGSM_GCELLGPRS());
 
 		// Creamos el fichero GCELLHO2GBA2
 		File ficheroGSM_GCELLHO2GBA2 = new File(sCarpetaEntradaT + "GCELLHO2GBA2.txt");
-		File ficheroSalida_GSM_GCELLHO2GBA2 = new File(sCarpetaSalidaT + "GCELLHO2GBA2.txt");
+		File ficheroSalida_GSM_GCELLHO2GBA2 = new File(sCarpetaSalidaT + "GCELLHO2GBA2_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLHO2GBA2, ficheroSalida_GSM_GCELLHO2GBA2,
 				retornaParametrosABuscarGCELLHO2GBA2(), retornaParametrosCabeceraGSM_GCELLHO2GBA2());
 
 		// Creamos el fichero GCELLHOAD
 		File ficheroGSM_GCELLHOAD = new File(sCarpetaEntradaT + "GCELLHOAD.txt");
-		File ficheroSalida_GSM_GCELLHOAD = new File(sCarpetaSalidaT + "GCELLHOAD.txt");
+		File ficheroSalida_GSM_GCELLHOAD = new File(sCarpetaSalidaT + "GCELLHOAD_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLHOAD, ficheroSalida_GSM_GCELLHOAD, retornaParametrosABuscarGCELLHOAD(),
 				retornaParametrosCabeceraGSM_GCELLHOAD());
 
 		// Creamos el fichero GCELLHOBASIC
 		File ficheroGSM_GCELLHOBASIC = new File(sCarpetaEntradaT + "GCELLHOBASIC.txt");
-		File ficheroSalida_GSM_GCELLHOBASIC = new File(sCarpetaSalidaT + "GCELLHOBASIC.txt");
+		File ficheroSalida_GSM_GCELLHOBASIC = new File(sCarpetaSalidaT + "GCELLHOBASIC_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLHOBASIC, ficheroSalida_GSM_GCELLHOBASIC,
 				retornaParametrosABuscarGCELLHOBASIC(), retornaParametrosCabeceraGSM_GCELLHOBASIC());
 
 		// Creamos el fichero GCELLHOCTRL
 		File ficheroGSM_GCELLHOCTRL = new File(sCarpetaEntradaT + "GCELLHOCTRL.txt");
-		File ficheroSalida_GSM_GCELLHOCTRL = new File(sCarpetaSalidaT + "GCELLHOCTRL.txt");
+		File ficheroSalida_GSM_GCELLHOCTRL = new File(sCarpetaSalidaT + "GCELLHOCTRL_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLHOCTRL, ficheroSalida_GSM_GCELLHOCTRL, retornaParametrosABuscarGCELLHOCTRL(),
 				retornaParametrosCabeceraGSM_GCCELHOCTRL());
 
 		// Creamos el fichero GCELLHOEMG
 		File ficheroGSM_GCELLHOEMG = new File(sCarpetaEntradaT + "GCELLHOEMG.txt");
-		File ficheroSalida_GSM_GCELLHOEMG = new File(sCarpetaSalidaT + "GCELLHOEMG.txt");
+		File ficheroSalida_GSM_GCELLHOEMG = new File(sCarpetaSalidaT + "GCELLHOEMG_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLHOEMG, ficheroSalida_GSM_GCELLHOEMG, retornaParametrosABuscarGCELLHOEMG(),
 				retornaParametrosCabeceraGSM_GCELLHOEMG());
 
 		// Creamos el fichero GCELLHOFITPEN
 		File ficheroGSM_GCELLHOFITPEN = new File(sCarpetaEntradaT + "GCELLHOFITPEN.txt");
-		File ficheroSalida_GSM_GCELLHOFITPEN = new File(sCarpetaSalidaT + "GCELLHOFITPEN.txt");
+		File ficheroSalida_GSM_GCELLHOFITPEN = new File(sCarpetaSalidaT + "GCELLHOFITPEN_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLHOFITPEN, ficheroSalida_GSM_GCELLHOFITPEN,
 				retornaParametrosABuscarGCELLHOFITPEN(), retornaParametrosCabeceraGSM_GCELLHOFITPEN());
 
 		// Creamos el fichero GCELLHOUTRANFDD
 		File ficheroGSM_GCELLHOUTRANFDD = new File(sCarpetaEntradaT + "GCELLHOUTRANFDD.txt");
-		File ficheroSalida_GSM_GCELLHOUTRANFDD = new File(sCarpetaSalidaT + "GCELLHOUTRANFDD.txt");
+		File ficheroSalida_GSM_GCELLHOUTRANFDD = new File(sCarpetaSalidaT + "GCELLHOUTRANFDD_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLHOUTRANFDD, ficheroSalida_GSM_GCELLHOUTRANFDD,
 				retornaParametrosABuscarGCELLHOUTRANFDD(), retornaParametrosCabeceraGSM_GCELLHOUTRANFDD());
 
 		// Creamos el fichero GCELLIDLEAD
 		File ficheroGSM_GCELLIDLEAD = new File(sCarpetaEntradaT + "GCELLIDLEAD.txt");
-		File ficheroSalida_GSM_GCELLIDLEAD = new File(sCarpetaSalidaT + "GCELLIDLEAD.txt");
+		File ficheroSalida_GSM_GCELLIDLEAD = new File(sCarpetaSalidaT + "GCELLIDLEAD_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLIDLEAD, ficheroSalida_GSM_GCELLIDLEAD, retornaParametrosABuscarGCELLIDLEAD(),
 				retornaParametrosCabeceraGSM_GCELLIDLEAD());
 
 		// Creamos el fichero GCELLIDLEADBASIC
 		File ficheroGSM_GCELLIDLEADBASIC = new File(sCarpetaEntradaT + "GCELLIDLEBASIC.txt");
-		File ficheroSalida_GSM_GCELLIDLEADBASIC = new File(sCarpetaSalidaT + "GCELLIDLEBASIC.txt");
+		File ficheroSalida_GSM_GCELLIDLEADBASIC = new File(sCarpetaSalidaT + "GCELLIDLEBASIC_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLIDLEADBASIC, ficheroSalida_GSM_GCELLIDLEADBASIC,
 				retornaParametrosABuscarGCELLIDLEADBASIC(), retornaParametrosCabeceraGSM_GCELLIDLEADBASIC());
 
 		// Creamos el fichero GCELLMAGRP
 		File ficheroGSM_GCELLMAGRP = new File(sCarpetaEntradaT + "GCELLMAGRP.txt");
-		File ficheroSalida_GSM_GCELLMAGRP = new File(sCarpetaSalidaT + "GCELLMAGRP.txt");
+		File ficheroSalida_GSM_GCELLMAGRP = new File(sCarpetaSalidaT + "GCELLMAGRP_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLMAGRP, ficheroSalida_GSM_GCELLMAGRP, retornaParametrosABuscarGCELLMAGRP(),
 				retornaParametrosCabeceraGSM_GCELLMAGRP());
 		
 		// Creamos el fichero GCELLOTHEXT 
 		File ficheroGSM_GCELLOTHEXT = new File(sCarpetaEntradaT + "GCELLOTHEXT.txt");
-		File ficheroSalida_GSM_GCELLOTHEXT = new File(sCarpetaSalidaT + "GCELLOTHEXT.txt");
+		File ficheroSalida_GSM_GCELLOTHEXT = new File(sCarpetaSalidaT + "GCELLOTHEXT_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLOTHEXT,ficheroSalida_GSM_GCELLOTHEXT,retornaParametrosABuscarGCELLOTHEXT(),
 				retornaParametrosCabeceraGSM_GCELLOTHEXT());
 		
 		// Creamos el fichero GCELLPRIEUTRANSYS
 		File ficheroGSM_GCELLPRIEUTRANSYS = new File(sCarpetaEntradaT + "GCELLPRIEUTRANSYS.txt");
-		File ficheroSalida_GSM_GCELLPRIEUTRANSYS = new File(sCarpetaSalidaT + "GCELLPRIEUTRANSYS.txt");
+		File ficheroSalida_GSM_GCELLPRIEUTRANSYS = new File(sCarpetaSalidaT + "GCELLPRIEUTRANSYS_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLPRIEUTRANSYS,ficheroSalida_GSM_GCELLPRIEUTRANSYS,retornaParametrosABuscarGCELLPRIEUTRANSYS(),
 				retornaParametrosCabeceraGCELLPRIEUTRANSYS());
 		
 		// Creamos el fichero GCELLPSBASE
 		File ficheroGSM_GCELLPSBASE = new File(sCarpetaEntradaT + "GCELLPSBASE.txt");
-		File ficheroSalida_GSM_GCELLPSBASE = new File(sCarpetaSalidaT + "GCELLPSBASE.txt");
+		File ficheroSalida_GSM_GCELLPSBASE = new File(sCarpetaSalidaT + "GCELLPSBASE_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLPSBASE,ficheroSalida_GSM_GCELLPSBASE,retornaParametrosABuscarGCELLPSBASE(),
 				retornaParametrosCabeceraGCELLPSBASE());
 		
 		// Creamos el fichero GCELLPSCHM
 		File ficheroGSM_GCELLPSCHM = new File(sCarpetaEntradaT + "GCELLPSCHM.txt");
-		File ficheroSalida_GSM_GCELLPSCHM = new File(sCarpetaSalidaT + "GCELLPSCHM.txt");
+		File ficheroSalida_GSM_GCELLPSCHM = new File(sCarpetaSalidaT + "GCELLPSCHM_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_GCELLPSCHM,ficheroSalida_GSM_GCELLPSCHM,retornaParametrosABuscarGCELLPSCHM(),
 				retornaParametrosCabeceraGCELLPSCHM());
 		
 		// Creamos el fichero GEXT2GCELL
 		File ficheroGSM_GEXT2GCELL = new File(sCarpetaEntradaT + "GEXT2GCELL.txt");
-		File ficheroSalida_GSM_GEXT2GCELL = new File(sCarpetaSalidaT + "GEXT2GCELL.txt");
-		escribeFicheroGSM(ficheroGSM_GEXT2GCELL,ficheroSalida_GSM_GEXT2GCELL,retornaParametrosABuscarGEXT2GCELL(),
-				retornaParametrosCabeceraGEXT2GCELL());
+		File ficheroSalida_GSM_GEXT2GCELL = new File(sCarpetaSalidaT + "GEXT2GCELL_Salida.txt");
+		escribeFicheroGSM_GEXT(ficheroGSM_GEXT2GCELL,ficheroSalida_GSM_GEXT2GCELL,retornaParametrosABuscarGEXT2GCELL(),
+				retornaParametrosCabeceraGEXT2GCELL(),sEXT2GCellIndex);
 		
 		// Creamos el fichero GEXT3GCELL 
 		File ficheroGSM_GEXT3GCELL = new File(sCarpetaEntradaT + "GEXT3GCELL.txt");
-		File ficheroSalida_GSM_GEXT3GCELL = new File(sCarpetaSalidaT + "GEXT3GCELL.txt");
-		escribeFicheroGSM(ficheroGSM_GEXT3GCELL,ficheroSalida_GSM_GEXT3GCELL,retornaParametrosABuscarGEXT3GCELL(),
-				retornaParametrosCabeceraGEXT3GCELL());
+		File ficheroSalida_GSM_GEXT3GCELL = new File(sCarpetaSalidaT + "GEXT3GCELL_Salida.txt");
+		escribeFicheroGSM_GEXT(ficheroGSM_GEXT3GCELL,ficheroSalida_GSM_GEXT3GCELL,retornaParametrosABuscarGEXT3GCELL(),
+				retornaParametrosCabeceraGEXT3GCELL(),sEXT3GCellIndex);
 		
-		// ->>> FALTA Creamos el fichero GEXTLTECELL
+		// Creamos el fichero GEXTLTECELL
 		File ficheroGSM_GEXTLTECELL = new File(sCarpetaEntradaT + "GEXTLTECELL.txt");
-		File ficheroSalida_GSM_GEXTLTECELL = new File(sCarpetaSalidaT + "GEXTLTECELL.txt");
-		escribeFicheroGSM(ficheroGSM_GEXTLTECELL,ficheroSalida_GSM_GEXTLTECELL,retornaParametrosABuscarGEXTLTECELL(),
+		File ficheroSalida_GSM_GEXTLTECELL = new File(sCarpetaSalidaT + "GEXTLTECELL_Salida.txt");
+		File ficheroArbolLTE = new File(sCarpetaSalidaT + "Arbol_LTE.txt");
+		creaArbolLTE(ficheroGSM_GEXTLTECELL);
+		escribeArbolLTE(ficheroArbolLTE);
+		escribeFicheroGSM_LTE(ficheroGSM_GEXTLTECELL,ficheroSalida_GSM_GEXTLTECELL,retornaParametrosABuscarGEXTLTECELL(),
 				retornaParametrosCabeceraGEXTLETCELL());
 		
-		// ->>> FALTA Creamos el fichero GLTENCELL
+		// Creamos el fichero GLTENCELL
 		File ficheroGSM_GLTENCELL = new File(sCarpetaEntradaT + "GLTENCELL.txt");
-		File ficheroSalida_GSM_GLTENCELL = new File(sCarpetaSalidaT + "GLTENCELL.txt");
-		escribeFicheroGSM(ficheroGSM_GLTENCELL,ficheroSalida_GSM_GLTENCELL, retornaParametrosABuscarGLTENCELL(),
+		File ficheroSalida_GSM_GLTENCELL = new File(sCarpetaSalidaT + "GLTENCELL_Salida.txt");
+		escribeFicheroGSM_LTENCELL(ficheroGSM_GLTENCELL,ficheroSalida_GSM_GLTENCELL, retornaParametrosABuscarGLTENCELL(),
 				retornaParametrosCabeceraGLTENCELL());
 		
 		// Creamos el fichero GTRX
 		File ficheroGSM_GTRX = new File(sCarpetaEntradaT + "GTRX.txt");
-		File ficheroSalida_GSM_GTRX = new File(sCarpetaSalidaT + "GTRX.txt");
+		File ficheroSalida_GSM_GTRX = new File(sCarpetaSalidaT + "GTRX_Salida.txt");
+		creaArbol_GSM_GTRS(ficheroGSM_GTRX);
 		escribeFicheroGSM(ficheroGSM_GTRX,ficheroSalida_GSM_GTRX,retornaParametrosABuscarGTRX(),
 				retornaParametrosCabeceraGTRX());
-		
+
 		// Creamos el fichero GTRXCHAN
 		File ficheroGSM_GTRXCHAN = new File(sCarpetaEntradaT + "GTRXCHAN.txt");
-		File ficheroSalida_GSM_GTRXCHAN = new File(sCarpetaSalidaT + "GTRXCHAN.txt");
-		escribeFicheroGSM(ficheroGSM_GTRXCHAN,ficheroSalida_GSM_GTRXCHAN,retornaParametrosABuscarGTRXCHAN(),
+		File ficheroSalida_GSM_GTRXCHAN = new File(sCarpetaSalidaT + "GTRXCHAN_Salida.txt");
+		escribeFicheroGSM_GTRX(ficheroGSM_GTRXCHAN,ficheroSalida_GSM_GTRXCHAN,retornaParametrosABuscarGTRXCHAN(),
 				retornaParametrosCabeceraGTRXCHAN());
 		
 		// Creamos el fichero GTRXCHANHOP
 		File ficheroGSM_GTRXCHANHOP = new File(sCarpetaEntradaT + "GTRXCHANHOP.txt");
-		File ficheroSalida_GSM_GTRXCHANHOP = new File(sCarpetaSalidaT + "GTRXCHANHOP.txt");
-		escribeFicheroGSM(ficheroGSM_GTRXCHANHOP,ficheroSalida_GSM_GTRXCHANHOP,retornaParametrosABuscarGTRXCHANHOP(),
+		File ficheroSalida_GSM_GTRXCHANHOP = new File(sCarpetaSalidaT + "GTRXCHANHOP_Salida.txt");
+		escribeFicheroGSM_GTRX(ficheroGSM_GTRXCHANHOP,ficheroSalida_GSM_GTRXCHANHOP,retornaParametrosABuscarGTRXCHANHOP(),
 				retornaParametrosCabeceraGTXCHANHOP());
 		
 		// Creamos el fichero GTRXDEV
 		File ficheroGSM_GTRXDEV = new File(sCarpetaEntradaT + "GTRXDEV.txt");
-		File ficheroSalida_GSM_GTRXDEV = new File(sCarpetaSalidaT + "GTRXDEV.txt");
-		escribeFicheroGSM(ficheroGSM_GTRXDEV,ficheroSalida_GSM_GTRXDEV,retornaParametrosABuscarGTRXDEV(),
+		File ficheroSalida_GSM_GTRXDEV = new File(sCarpetaSalidaT + "GTRXDEV_Salida.txt");
+		escribeFicheroGSM_GTRX(ficheroGSM_GTRXDEV,ficheroSalida_GSM_GTRXDEV,retornaParametrosABuscarGTRXDEV(),
 				retornaParametrosCabeceraGTRXDEV());
 		
 		// Creamos el fichero PTPBVC
 		File ficheroGSM_PTPBVC = new File(sCarpetaEntradaT + "PTPBVC.txt");
-		File ficheroSalida_GSM_PTPBVC = new File(sCarpetaSalidaT + "PTVBVC.txt");
+		File ficheroSalida_GSM_PTPBVC = new File(sCarpetaSalidaT + "PTVBVC_Salida.txt");
 		escribeFicheroGSM(ficheroGSM_PTPBVC,ficheroSalida_GSM_PTPBVC,retornaParametrosABuscarPTPBVC(),
-				retornaParametrosCabeceraPTPBVC());
+				retornaParametrosCabeceraPTPBVC());	
 		System.out.println("FIN");
 	}
 
@@ -363,14 +375,8 @@ public class Prueba {
 				for (String sNeid : mapaGCELLCellIdParametroValor.keySet()) {
 					if (sNeid.equalsIgnoreCase(sBSC)) {
 						for (Integer iCellIndex : mapaGCELLCellIdParametroValor.get(sNeid).keySet()) {
-							if (iCellIndex == UtilidadesTexto
-									.dameValorEntero(aValoresParametros[mapaCabeceraFicheroCELLFreq.get(sCellId)])) {
-								if (mapaGCELLCellIdParametroValor.get(sNeid).get(iCellIndex).get(sFecha)
-										.equalsIgnoreCase(
-												aValoresParametros[mapaCabeceraFicheroCELLFreq.get(sFecha)])) {
-									mapaGCELLCellIdParametroValor.get(sNeid).get(iCellIndex).put("BCCH",
-											aValoresParametros[mapaCabeceraFicheroCELLFreq.get("FREQ1")]);
-								}
+							if (iCellIndex == UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroCELLFreq.get(sCellId)])) {
+									mapaGCELLCellIdParametroValor.get(sNeid).get(iCellIndex).put("BCCH",aValoresParametros[mapaCabeceraFicheroCELLFreq.get("FREQ1")]);
 							}
 						}
 					}
@@ -473,75 +479,72 @@ public class Prueba {
 			System.out.println("Otra excepción creaArbolGSMBTS");
 		}
 	}
-//	private static TreeMap<String, TreeMap<String, TreeMap<String, String>>> creaArbolGSMBTSAux(File ficheroGSM_BTS) {
-//		try (FileReader fr = new FileReader(ficheroGSM_BTS); BufferedReader br = new BufferedReader(fr)) {
-//			String sCabeceraFichero = br.readLine();
-//			TreeMap<String, Integer> mapaCabeceraFicheroGSMBTS = retornaMapaCabecera(sCabeceraFichero);
-//			String sValoresParametros = br.readLine();
-//			while (sValoresParametros != null) {
-//				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
-//				if (!mapaGSMBTS.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTS.get(sNeid)])) {
-//					mapaGSMBTS.put(aValoresParametros[mapaCabeceraFicheroGSMBTS.get(sNeid)],
-//							new TreeMap<String, TreeMap<String, String>>());
-//				}
-//				if (!mapaGSMBTS.get(aValoresParametros[mapaCabeceraFicheroGSMBTS.get(sNeid)])
-//						.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTS.get(sBTSId)])) {
-//					mapaGSMBTS.get(aValoresParametros[mapaCabeceraFicheroGSMBTS.get(sNeid)]).put(
-//							aValoresParametros[mapaCabeceraFicheroGSMBTS.get(sBTSId)], new TreeMap<String, String>());
-//				}
-//				if (!mapaGSMBTS.get(aValoresParametros[mapaCabeceraFicheroGSMBTS.get(sNeid)])
-//						.get(aValoresParametros[mapaCabeceraFicheroGSMBTS.get(sBTSId)])
-//						.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTS.get(sBTSNAME)])) {
-//					mapaGSMBTS.get(aValoresParametros[mapaCabeceraFicheroGSMBTS.get(sNeid)])
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTS.get(sBTSId)])
-//							.put(aValoresParametros[mapaCabeceraFicheroGSMBTS.get(sBTSNAME)],
-//									aValoresParametros[mapaCabeceraFicheroGSMBTS.get(sFecha)]);
-//				}
-//				sValoresParametros = br.readLine();
-//			}
-//		} catch (FileNotFoundException e) {
-//			System.out.println("File Not found creaArbolGSMBTS");
-//		} catch (IOException e) {
-//			System.out.println("IO Exception creaArbolGSMBTS");
-//		} catch (Exception e) {
-//			System.out.println("Otra excepción creaArbolGSMBTS");
-//		}
-//		return mapaGSMBTS;
-//	}
+	
+	private static void creaArbol_GSM_GTRS(File ficheroGSM_GTRX) {
+		mapaGSMGTRX = new TreeMap<String,TreeMap<String,TreeMap<String,String>>>();
+		try (FileReader fr = new FileReader(ficheroGSM_GTRX); BufferedReader br = new BufferedReader(fr)) {
+			String sCabeceraFichero = br.readLine();
+			TreeMap<String, Integer> mapaCabeceraFicheroGSMGTRX = retornaMapaCabecera(sCabeceraFichero);
+			String sValoresParametros = br.readLine();
+			while (sValoresParametros != null) {
+				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
+				if (!mapaGSMGTRX.containsKey(aValoresParametros[mapaCabeceraFicheroGSMGTRX.get(sNeid)])) {
+					mapaGSMGTRX.put(aValoresParametros[mapaCabeceraFicheroGSMGTRX.get(sNeid)],
+							new TreeMap<String, TreeMap<String, String>>());
+				}
+				if(!mapaGSMGTRX.get(aValoresParametros[mapaCabeceraFicheroGSMGTRX.get(sNeid)])
+						.containsKey(aValoresParametros[mapaCabeceraFicheroGSMGTRX.get(sTRXID)])){
+					mapaGSMGTRX.get(aValoresParametros[mapaCabeceraFicheroGSMGTRX.get(sNeid)])
+					.put(aValoresParametros[mapaCabeceraFicheroGSMGTRX.get(sTRXID)],new TreeMap<String,String>());
+				}
+				if(!mapaGSMGTRX.get(aValoresParametros[mapaCabeceraFicheroGSMGTRX.get(sNeid)])
+						.get(aValoresParametros[mapaCabeceraFicheroGSMGTRX.get(sTRXID)])
+						.containsKey(sCellId)){
+					mapaGSMGTRX.get(aValoresParametros[mapaCabeceraFicheroGSMGTRX.get(sNeid)])
+					.get(aValoresParametros[mapaCabeceraFicheroGSMGTRX.get(sTRXID)])
+					.put(sCellId,aValoresParametros[mapaCabeceraFicheroGSMGTRX.get(sCellId)]);
+				}
+				sValoresParametros = br.readLine();
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private static void escribeArbolLTE(File ficheroArbolGSM_LTE) {
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroArbolGSM_LTE))) {
+			StrBuilder compositorCabecera = new StrBuilder();
+			compositorCabecera.append("\"NEID\"");
+			compositorCabecera.appendSeparator(",");
+			compositorCabecera.append("\"CELLID\"");
+			compositorCabecera.appendSeparator(",");
+			compositorCabecera.append("\"NOMBRE\"");
+			compositorCabecera.appendSeparator(",");
+			compositorCabecera.append("\"Fecha\"");
+			bw.write(compositorCabecera.toString()+"\r\n");
+			for (String sNeid : mapaGSMLTE.keySet()) {
+				for (Integer sBTSid : mapaGSMLTE.get(sNeid).keySet()) {
+					StrBuilder compositorValores = new StrBuilder();
+					compositorValores.append(sNeid);
+					compositorValores.appendSeparator(",");
+					compositorValores.append(sBTSid);
+					compositorValores.appendSeparator(",");
+					for(String sParametro : mapaGSMLTE.get(sNeid).get(sBTSid).keySet()){
+						compositorValores.append(mapaGSMLTE.get(sNeid).get(sBTSid).get(sParametro));
+						compositorValores.appendSeparator(",");
+					}
+					bw.write(compositorValores.toString().substring(0, compositorValores.size()-1)+"\r\n");
+				}
+			}
+		} catch (IOException e) {
+			System.out.println("IO  Exception");
+		}
+	}
 
-//	private static void escribeFicheroBTS(File ficheroGSM_BTS, File ficheroSalida_GSM_BTS) {
-//		try (FileReader fr = new FileReader(ficheroGSM_BTS);
-//				BufferedReader br = new BufferedReader(fr);
-//				BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroSalida_GSM_BTS))) {
-//			StrBuilder creadorCabecera = new StrBuilder();
-//			for (String sParametro : retornaParametrosCabeceraGSM_BTS()) {
-//				creadorCabecera.append("\"" + sParametro + "\"");
-//				creadorCabecera.appendSeparator(",");
-//			}
-//			bw.write(creadorCabecera.toString().substring(0, creadorCabecera.toString().length() - 1) + "\r\n");
-//
-//			br.readLine();
-//			String sValoresParametros = br.readLine();
-//			while (sValoresParametros != null) {
-//				StrBuilder creadorLineaValores = new StrBuilder();
-//				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, "\t");
-//				for (String sValorParametro : aValoresParametros) {
-//					creadorLineaValores.append(sValorParametro);
-//					creadorLineaValores.appendSeparator(",");
-//
-//				}
-//				bw.write(creadorLineaValores.toString().substring(0, creadorLineaValores.toString().length() - 1)
-//						+ "\r\n");
-//				sValoresParametros = br.readLine();
-//			}
-//		} catch (FileNotFoundException e) {
-//			System.out.println("File Not Found Exception escribeFicheroBTS");
-//		} catch (IOException e) {
-//			System.out.println("IOException escribeFicheroBTS");
-//		} catch (Exception e) {
-//			System.out.println("Otra excepción escribeFicheroBTS");
-//		}
-//	}
 
 	private static void escribeArbolBTS(File ficheroArbolGSM_BTS) {
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroArbolGSM_BTS))) {
@@ -550,7 +553,10 @@ public class Prueba {
 			compositorCabecera.appendSeparator(",");
 			compositorCabecera.append("\"BTSID\"");
 			compositorCabecera.appendSeparator(",");
-			compositorCabecera.append("\"Fecha\"" + "\r\n");
+			compositorCabecera.append("\"NOMBRE\"");
+			compositorCabecera.appendSeparator(",");
+			compositorCabecera.append("\"Fecha\"");
+			bw.write(compositorCabecera.toString()+"\r\n");
 			for (String sNeid : mapaGSMBTS.keySet()) {
 				for (String sBTSid : mapaGSMBTS.get(sNeid).keySet()) {
 					StrBuilder compositorValores = new StrBuilder();
@@ -558,11 +564,52 @@ public class Prueba {
 					compositorValores.appendSeparator(",");
 					compositorValores.append(sBTSid);
 					compositorValores.appendSeparator(",");
-					compositorValores.append(mapaGSMBTS.get(sNeid).get(sBTSid) + "\r\n");
+					for(String sParametro : mapaGSMBTS.get(sNeid).get(sBTSid).keySet()){
+						compositorValores.append(mapaGSMBTS.get(sNeid).get(sBTSid).get(sParametro));
+						compositorValores.appendSeparator(",");
+					}
+					bw.write(compositorValores.toString().substring(0, compositorValores.size()-1)+"\r\n");
 				}
 			}
 		} catch (IOException e) {
-			System.out.println("IOException");
+			System.out.println("IO  Exception");
+		}
+
+	}
+	
+	private static void escribeArbolBTSRET(File ficheroArbolGSM_BTSRET) {
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroArbolGSM_BTSRET))) {
+			StrBuilder compositorCabecera = new StrBuilder();
+			compositorCabecera.append("\"NEID\"");
+			compositorCabecera.appendSeparator(",");
+			compositorCabecera.append("\"BTSID\"");
+			compositorCabecera.appendSeparator(",");
+			compositorCabecera.append("\"DEVICE\"");
+			compositorCabecera.appendSeparator(",");
+			compositorCabecera.append("\"DEVICENAME\"");
+			compositorCabecera.appendSeparator(",");
+			compositorCabecera.append("\"Fecha\"");
+			bw.write(compositorCabecera.toString()+"\r\n");
+			for (String sNeid : mapaGSMBTSRET.keySet()) {
+				for (String sBTSid : mapaGSMBTSRET.get(sNeid).keySet()) {
+					for(String sDevice : mapaGSMBTSRET.get(sNeid).get(sBTSid).keySet()){
+						StrBuilder compositorValores = new StrBuilder();
+						compositorValores.append(sNeid);
+						compositorValores.appendSeparator(",");
+						compositorValores.append(sBTSid);
+						compositorValores.appendSeparator(",");
+						compositorValores.append(sDevice);
+						compositorValores.appendSeparator(",");
+						for(String sParametro : mapaGSMBTSRET.get(sNeid).get(sBTSid).get(sDevice).keySet()){
+							compositorValores.append(mapaGSMBTSRET.get(sNeid).get(sBTSid).get(sDevice).get(sParametro));
+							compositorValores.appendSeparator(",");
+						}
+						bw.write(compositorValores.toString().substring(0, compositorValores.size()-1)+"\r\n");
+					}
+				}
+			}
+		} catch (IOException e) {
+			System.out.println("IO  Exception");
 		}
 
 	}
@@ -600,8 +647,9 @@ public class Prueba {
 			System.out.println("Otra excepción GCELLFINAL");
 		}
 	}
+	
 	private static void creaArbolGSM_BTSRET(File ficheroGSM_BTSRET){
-		
+		mapaGSMBTSRET =  new TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String,String>>>> ();
 		try (FileReader fr = new FileReader(ficheroGSM_BTSRET); BufferedReader br = new BufferedReader(fr)) {
 			String sCabeceraFichero = br.readLine();
 			TreeMap<String, Integer> mapaCabeceraFicheroGSMBTSRET = retornaMapaCabecera(sCabeceraFichero);
@@ -624,16 +672,6 @@ public class Prueba {
 					.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBTSId)])
 					.put(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sDeviceNo)],new TreeMap<String,String>());
 				}
-				
-				if(!mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sNeid)])
-						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBTSId)])
-						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sDeviceNo)])
-						.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sFecha)])){
-					mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sNeid)])
-					.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBTSId)])
-					.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sDeviceNo)])
-					.put(sFecha, aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sFecha)]);
-				}
 				if(!mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sNeid)])
 						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBTSId)])
 						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sDeviceNo)])
@@ -643,6 +681,16 @@ public class Prueba {
 					.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sDeviceNo)])
 					.put(sDeviceName, aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sDeviceName)]);
 				}
+				if(!mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sNeid)])
+						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBTSId)])
+						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sDeviceNo)])
+						.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sFecha)])){
+					mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sNeid)])
+					.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBTSId)])
+					.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sDeviceNo)])
+					.put(sFecha, aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sFecha)]);
+				}
+				
 				sValoresParametros = br.readLine();
 				
 			}
@@ -655,450 +703,49 @@ public class Prueba {
 		}
 						
 	}
-//	private static TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>>> creaArbolGSM_BTSRETAux(
-//			File ficheroGSM_BTSRET) {
-//		String[] aParametrosGSM_BTSRET = retornaParametrosABuscarGSMBTSRET();
-//		String sNombreBTS = "---";
-//		try (FileReader fr = new FileReader(ficheroGSM_BTSRET); BufferedReader br = new BufferedReader(fr)) {
-//			String sCabeceraFichero = br.readLine();
-//			TreeMap<String, Integer> mapaCabeceraFicheroGSMBTSRET = retornaMapaCabecera(sCabeceraFichero);
-//			String sValoresParametros = br.readLine();
-//			while (sValoresParametros != null) {
-//				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
-//
-//				if ((mapaGSMBTS.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sNeid)]))
-//						&& (mapaGSMBTS.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sNeid)])
-//								.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBTSId)]))) {
-//					sNombreBTS = mapaGSMBTS.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sNeid)])
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBTSId)]).firstKey();
-//				}
-//
-//				if (!mapaGSMBTSRET.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sNeid)])) {
-//					mapaGSMBTSRET.put(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sNeid)],
-//							new TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>>());
-//				}
-//				if (!mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sNeid)])
-//						.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBTSId)])) {
-//					mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sNeid)]).put(
-//							aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBTSId)],
-//							new TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>());
-//				}
-//				if (!mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sNeid)])
-//						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBTSId)]).containsKey(sNombreBTS)) {
-//					mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sNeid)])
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBTSId)])
-//							.put(sNombreBTS, new TreeMap<String, TreeMap<String, TreeMap<String, String>>>());
-//				}
-//				if (!mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sNeid)])
-//						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBTSId)]).get(sNombreBTS)
-//						.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sDeviceNo)])) {
-//					mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sNeid)])
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBTSId)]).get(sNombreBTS)
-//							.put(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sDeviceNo)],
-//									new TreeMap<String, TreeMap<String, String>>());
-//				}
-//				if (!mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sNeid)])
-//						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBTSId)]).get(sNombreBTS)
-//						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sDeviceNo)])
-//						.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sDeviceName)])) {
-//					mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sNeid)])
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBTSId)]).get(sNombreBTS)
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sDeviceNo)])
-//							.put(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sDeviceName)],
-//									new TreeMap<String, String>());
-//				}
-//				for (String sParametro : aParametrosGSM_BTSRET) {
-//					if (!mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sNeid)])
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBTSId)]).get(sNombreBTS)
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sDeviceNo)])
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sDeviceName)])
-//							.containsKey(sParametro)) {
-//						mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sNeid)])
-//								.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sBTSId)]).get(sNombreBTS)
-//								.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sDeviceNo)])
-//								.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sDeviceName)])
-//								.put(sParametro, aValoresParametros[mapaCabeceraFicheroGSMBTSRET.get(sParametro)]);
-//					}
-//				}
-//
-//				sValoresParametros = br.readLine();
-//			}
-//		} catch (FileNotFoundException e) {
-//			System.out.println("File Not Found Exception creaArbolGSM_BTSRET");
-//		} catch (IOException e) {
-//			System.out.println("IOException creaArbolGSM_BTSRET");
-//		} catch (Exception e) {
-//			System.out.println("Otra excepción creaArbolGSM_BTSRET");
-//		}
-//		return mapaGSMBTSRET;
-//
-//	}
-
-//	private static void escribeFicheroGSM_BTSRETAux(File ficheroSalida_GSM_BTSRET) {
-//		try (BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroSalida_GSM_BTSRET))) {
-//			StrBuilder compositorCabecera = new StrBuilder();
-//			for (String sParametro : retornaParametrosCabeceraGSM_BTSRET()) {
-//				compositorCabecera.append(sParametro);
-//				compositorCabecera.appendSeparator(",");
-//			}
-//			bw.write(compositorCabecera.toString().substring(0, compositorCabecera.size() - 1) + "\r\n");
-//			for (String sNeid : mapaGSMBTSRET.keySet()) {
-//				for (String sBTSId : mapaGSMBTSRET.get(sNeid).keySet()) {
-//					for (String sBTSName : mapaGSMBTSRET.get(sNeid).get(sBTSId).keySet()) {
-//						for (String sDeviceNo : mapaGSMBTSRET.get(sNeid).get(sBTSId).get(sBTSName).keySet()) {
-//							for (String sDeviceName : mapaGSMBTSRET.get(sNeid).get(sBTSId).get(sBTSName).get(sDeviceNo)
-//									.keySet()) {
-//								StrBuilder compositorValores = new StrBuilder();
-//								compositorValores.append(sNeid);
-//								compositorValores.appendSeparator(",");
-//								compositorValores.append(sBTSId);
-//								compositorValores.appendSeparator(",");
-//								compositorValores.append(sBTSName);
-//								compositorValores.appendSeparator(",");
-//								compositorValores.append(sDeviceNo);
-//								compositorValores.appendSeparator(",");
-//								compositorValores.append(sDeviceName);
-//								compositorValores.appendSeparator(",");
-//								for (String sParametro : mapaGSMBTSRET.get(sNeid).get(sBTSId).get(sBTSName)
-//										.get(sDeviceNo).get(sDeviceName).keySet()) {
-//									compositorValores.append(mapaGSMBTSRET.get(sNeid).get(sBTSId).get(sBTSName)
-//											.get(sDeviceNo).get(sDeviceName).get(sParametro));
-//									compositorValores.appendSeparator(",");
-//								}
-//								bw.write(compositorValores.toString().substring(0, compositorValores.size() - 1)
-//										+ "\r\n");
-//							}
-//						}
-//					}
-//				}
-//			}
-//
-//		} catch (FileNotFoundException e) {
-//			System.out.println("File Not Found Exception escribeFicheroGSM_BTSRET");
-//		} catch (IOException e) {
-//			System.out.println("IOException escribeFicheroGSM_BTSRET");
-//		} catch (Exception e) {
-//			System.out.println("Otra excepción escribeFicheroGSM_BTSRET");
-//		}
-//
-//	}
-
-//	private static TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>>> crearArbolGSM_BTSRETDEVICEDATA(
-//			File ficheroGSM_BTSRETDEVICEDATA) {
-//		TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>>> arbolBTSDEVICEDATA = new TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>>>();
-//		String[] aParametrosGSM_BTSRETDEVICEDATA = retornaParametrosABuscarGSMRETDEVICEDATA();
-//		String sNombreBTS = "---";
-//		String sDeviceName = "---";
-//		try (FileReader fr = new FileReader(ficheroGSM_BTSRETDEVICEDATA); BufferedReader br = new BufferedReader(fr)) {
-//			String sCabeceraFichero = br.readLine();
-//			TreeMap<String, Integer> mapaCabeceraFicheroGSMBTSRETDEVICEDATA = retornaMapaCabecera(sCabeceraFichero);
-//			String sValoresParametros = br.readLine();
-//			while (sValoresParametros != null) {
-//				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
-//				if ((mapaGSMBTS.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sNeid)]))
-//						&& (mapaGSMBTS.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sNeid)])
-//								.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)]))) {
-//
-//					sNombreBTS = mapaGSMBTS.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sNeid)])
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)]).firstKey();
-//
-//				}
-//				if (!arbolBTSDEVICEDATA
-//						.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sNeid)])) {
-//					arbolBTSDEVICEDATA.put(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sNeid)],
-//							new TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>>());
-//				}
-//				if (!arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sNeid)])
-//						.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)])) {
-//
-//					arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sNeid)]).put(
-//							aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)],
-//							new TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>());
-//				}
-//				if (!arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sNeid)])
-//						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)])
-//						.containsKey(sNombreBTS)) {
-//
-//					arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sNeid)])
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)])
-//							.put(sNombreBTS, new TreeMap<String, TreeMap<String, TreeMap<String, String>>>());
-//				}
-//
-//				if ((mapaGSMBTSRET.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sNeid)]))
-//						&& (mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sNeid)])
-//								.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)]))
-//						&& (mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sNeid)])
-//								.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)])
-//								.containsKey(sNombreBTS))
-//						&& (mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sNeid)])
-//								.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)])
-//								.get(sNombreBTS).containsKey(
-//										aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sDeviceNo)]))) {
-//
-//					sDeviceName = mapaGSMBTSRET
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sNeid)])
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)]).get(sNombreBTS)
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sDeviceNo)]).firstKey();
-//				}
-//
-//				if (!arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sNeid)])
-//						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)]).get(sNombreBTS)
-//						.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sDeviceNo)])) {
-//
-//					arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sNeid)])
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)]).get(sNombreBTS)
-//							.put(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sDeviceNo)],
-//									new TreeMap<String, TreeMap<String, String>>());
-//
-//				}
-//
-//				if (!arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sNeid)])
-//						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)]).get(sNombreBTS)
-//						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sDeviceNo)])
-//						.containsKey(sDeviceName)) {
-//
-//					arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sNeid)])
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)]).get(sNombreBTS)
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sDeviceNo)])
-//							.put(sDeviceName, new TreeMap<String, String>());
-//
-//				}
-//				for (String sParametro : aParametrosGSM_BTSRETDEVICEDATA) {
-//					if (!arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sNeid)])
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)]).get(sNombreBTS)
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sDeviceNo)])
-//							.get(sDeviceName).containsKey(sParametro)) {
-//						arbolBTSDEVICEDATA.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sNeid)])
-//								.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sBTSId)])
-//								.get(sNombreBTS)
-//								.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sDeviceNo)])
-//								.get(sDeviceName).put(sParametro,
-//										aValoresParametros[mapaCabeceraFicheroGSMBTSRETDEVICEDATA.get(sParametro)]);
-//					}
-//				}
-//				sValoresParametros = br.readLine();
-//			}
-//
-//		} catch (FileNotFoundException e) {
-//			System.out.println("File Not Found Exception crearArbolGSM_BTSRETDEVICEDATA");
-//		} catch (IOException e) {
-//			System.out.println("IOException crearArbolGSM_BTSRETDEVICEDATA");
-//		} catch (Exception e) {
-//			System.out.println("Otra excepción crearArbolGSM_BTSRETDEVICEDATA");
-//		}
-//		return arbolBTSDEVICEDATA;
-//	}
-
-//	private static void escribeFicheroGSM_BTSRETDEVICEDATAAux(
-//			TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>>> arbolGSMBTSRETDEVICE,
-//			File ficheroSalida_GSM_BRSRETDEVICEDATA) {
-//
-//		try (BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroSalida_GSM_BRSRETDEVICEDATA))) {
-//			StrBuilder compositorCabecera = new StrBuilder();
-//			for (String sParametro : retornaParametrosCabeceraGSM_BTSRETDEVICEDATA()) {
-//				compositorCabecera.append(sParametro);
-//				compositorCabecera.appendSeparator(",");
-//			}
-//			bw.write(compositorCabecera.toString().substring(0, compositorCabecera.size() - 1) + "\r\n");
-//			for (String sNeid : arbolGSMBTSRETDEVICE.keySet()) {
-//				for (String sBTSId : arbolGSMBTSRETDEVICE.get(sNeid).keySet()) {
-//					for (String sBTSName : arbolGSMBTSRETDEVICE.get(sNeid).get(sBTSId).keySet()) {
-//						for (String sDeviceNo : arbolGSMBTSRETDEVICE.get(sNeid).get(sBTSId).get(sBTSName).keySet()) {
-//							for (String sDeviceName : arbolGSMBTSRETDEVICE.get(sNeid).get(sBTSId).get(sBTSName)
-//									.get(sDeviceNo).keySet()) {
-//								StrBuilder compositorValores = new StrBuilder();
-//								compositorValores.append(sNeid);
-//								compositorValores.appendSeparator(",");
-//								compositorValores.append(sBTSId);
-//								compositorValores.appendSeparator(",");
-//								compositorValores.append(sBTSName);
-//								compositorValores.appendSeparator(",");
-//								compositorValores.append(sDeviceNo);
-//								compositorValores.appendSeparator(",");
-//								compositorValores.append(sDeviceName);
-//								compositorValores.appendSeparator(",");
-//								for (String sParametro : arbolGSMBTSRETDEVICE.get(sNeid).get(sBTSId).get(sBTSName)
-//										.get(sDeviceNo).get(sDeviceName).keySet()) {
-//
-//									compositorValores.append(arbolGSMBTSRETDEVICE.get(sNeid).get(sBTSId).get(sBTSName)
-//											.get(sDeviceNo).get(sDeviceName).get(sParametro));
-//									compositorValores.appendSeparator(",");
-//								}
-//								bw.write(compositorValores.toString().substring(0, compositorValores.size() - 1)
-//										+ "\r\n");
-//
-//							}
-//						}
-//					}
-//				}
-//			}
-//
-//		} catch (FileNotFoundException e) {
-//			System.out.println("File Not Found Exception escribeFicheroGSM_BTSRETDEVICEDATA");
-//		} catch (IOException e) {
-//			System.out.println("IOException escribeFicheroGSM_BTSRETDEVICEDATA");
-//		} catch (Exception e) {
-//			System.out.println("Otra excepción escribeFicheroGSM_BTSRETDEVICEDATA");
-//		}
-//	}
-
-//	private static TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>>> crearArbolGSM_BTSRETSUBUNIT(
-//			File ficheroGSM_BTSRETSUBUNIT) {
-//		TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>>> arbolBTSRETSUBUNIT = new TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>>>();
-//		String[] aParametrosGSM_BTSRETSUBUNIT = retornaParametrosABuscarGSMRETSUBUNIT();
-//		String sNombreBTS = "---";
-//		String sDeviceName = "---";
-//		try (FileReader fr = new FileReader(ficheroGSM_BTSRETSUBUNIT); BufferedReader br = new BufferedReader(fr)) {
-//			String sCabeceraFichero = br.readLine();
-//			TreeMap<String, Integer> mapaCabeceraFicheroGSMBTSRETSUBUNIT = retornaMapaCabecera(sCabeceraFichero);
-//			String sValoresParametros = br.readLine();
-//			while (sValoresParametros != null) {
-//				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
-//				if ((mapaGSMBTS.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sNeid)]))
-//						&& (mapaGSMBTS.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sNeid)])
-//								.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)]))) {
-//
-//					sNombreBTS = mapaGSMBTS.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sNeid)])
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)]).firstKey();
-//
-//				}
-//				if (!arbolBTSRETSUBUNIT
-//						.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sNeid)])) {
-//					arbolBTSRETSUBUNIT.put(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sNeid)],
-//							new TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>>());
-//				}
-//				if (!arbolBTSRETSUBUNIT.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sNeid)])
-//						.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)])) {
-//
-//					arbolBTSRETSUBUNIT.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sNeid)]).put(
-//							aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)],
-//							new TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>());
-//				}
-//				if (!arbolBTSRETSUBUNIT.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sNeid)])
-//						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)])
-//						.containsKey(sNombreBTS)) {
-//
-//					arbolBTSRETSUBUNIT.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sNeid)])
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)])
-//							.put(sNombreBTS, new TreeMap<String, TreeMap<String, TreeMap<String, String>>>());
-//				}
-//
-//				if ((mapaGSMBTSRET.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sNeid)]))
-//						&& (mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sNeid)])
-//								.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)]))
-//						&& (mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sNeid)])
-//								.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)])
-//								.containsKey(sNombreBTS))
-//						&& (mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sNeid)])
-//								.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)])
-//								.get(sNombreBTS)
-//								.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sDeviceNo)]))) {
-//
-//					sDeviceName = mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sNeid)])
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)]).get(sNombreBTS)
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sDeviceNo)]).firstKey();
-//				}
-//
-//				if (!arbolBTSRETSUBUNIT.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sNeid)])
-//						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)]).get(sNombreBTS)
-//						.containsKey(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sDeviceNo)])) {
-//
-//					arbolBTSRETSUBUNIT.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sNeid)])
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)]).get(sNombreBTS)
-//							.put(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sDeviceNo)],
-//									new TreeMap<String, TreeMap<String, String>>());
-//
-//				}
-//
-//				if (!arbolBTSRETSUBUNIT.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sNeid)])
-//						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)]).get(sNombreBTS)
-//						.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sDeviceNo)])
-//						.containsKey(sDeviceName)) {
-//
-//					arbolBTSRETSUBUNIT.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sNeid)])
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)]).get(sNombreBTS)
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sDeviceNo)])
-//							.put(sDeviceName, new TreeMap<String, String>());
-//
-//				}
-//				for (String sParametro : aParametrosGSM_BTSRETSUBUNIT) {
-//					if (!arbolBTSRETSUBUNIT.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sNeid)])
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)]).get(sNombreBTS)
-//							.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sDeviceNo)])
-//							.get(sDeviceName).containsKey(sParametro)) {
-//						arbolBTSRETSUBUNIT.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sNeid)])
-//								.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sBTSId)])
-//								.get(sNombreBTS)
-//								.get(aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sDeviceNo)])
-//								.get(sDeviceName).put(sParametro,
-//										aValoresParametros[mapaCabeceraFicheroGSMBTSRETSUBUNIT.get(sParametro)]);
-//					}
-//				}
-//				sValoresParametros = br.readLine();
-//			}
-//
-//		} catch (FileNotFoundException e) {
-//			System.out.println("File Not Found Exception crearArbolGSM_BTSRETSUBUNIT");
-//		} catch (IOException e) {
-//			System.out.println("IOException crearArbolGSM_BTSRETSUBUNIT");
-//		} catch (Exception e) {
-//			System.out.println("Otra excepción crearArbolGSM_BTSRETSUBUNIT");
-//		}
-//		return arbolBTSRETSUBUNIT;
-//	}
-
-//	private static void escribeFicheroGSM_BTSRETSUBUNIT(
-//			TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, String>>>>>> arbolGSM_BTSRETSUBUNIT,
-//			File ficheroSalida_GSM_BTSRETSUBUNIT) {
-//		try (BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroSalida_GSM_BTSRETSUBUNIT))) {
-//			StrBuilder compositorCabecera = new StrBuilder();
-//			for (String sParametro : retornaParametrosCabeceraGSM_BTSRETSUBUNIT()) {
-//				compositorCabecera.append(sParametro);
-//				compositorCabecera.appendSeparator(",");
-//			}
-//			bw.write(compositorCabecera.toString().substring(0, compositorCabecera.size() - 1) + "\r\n");
-//			for (String sNeid : arbolGSM_BTSRETSUBUNIT.keySet()) {
-//				for (String sBTSId : arbolGSM_BTSRETSUBUNIT.get(sNeid).keySet()) {
-//					for (String sBTSName : arbolGSM_BTSRETSUBUNIT.get(sNeid).get(sBTSId).keySet()) {
-//						for (String sDeviceNo : arbolGSM_BTSRETSUBUNIT.get(sNeid).get(sBTSId).get(sBTSName).keySet()) {
-//							for (String sDeviceName : arbolGSM_BTSRETSUBUNIT.get(sNeid).get(sBTSId).get(sBTSName)
-//									.get(sDeviceNo).keySet()) {
-//								StrBuilder compositorValores = new StrBuilder();
-//								compositorValores.append(sNeid);
-//								compositorValores.appendSeparator(",");
-//								compositorValores.append(sBTSId);
-//								compositorValores.appendSeparator(",");
-//								compositorValores.append(sBTSName);
-//								compositorValores.appendSeparator(",");
-//								compositorValores.append(sDeviceNo);
-//								compositorValores.appendSeparator(",");
-//								compositorValores.append(sDeviceName);
-//								compositorValores.appendSeparator(",");
-//								for (String sParametro : arbolGSM_BTSRETSUBUNIT.get(sNeid).get(sBTSId).get(sBTSName)
-//										.get(sDeviceNo).get(sDeviceName).keySet()) {
-//
-//									compositorValores.append(arbolGSM_BTSRETSUBUNIT.get(sNeid).get(sBTSId).get(sBTSName)
-//											.get(sDeviceNo).get(sDeviceName).get(sParametro));
-//									compositorValores.appendSeparator(",");
-//								}
-//								bw.write(compositorValores.toString().substring(0, compositorValores.size() - 1)
-//										+ "\r\n");
-//
-//							}
-//						}
-//					}
-//				}
-//			}
-//
-//		} catch (FileNotFoundException e) {
-//			System.out.println("File Not Found Exception escribeFicheroGSM_BTSRETSUBUNIT");
-//		} catch (IOException e) {
-//			System.out.println("IOException escribeFicheroGSM_BTSRETSUBUNIT");
-//		} catch (Exception e) {
-//			System.out.println("Otra excepción escribeFicheroGSM_BTSRETSUBUNIT");
-//		}
-//
-//	}
+	
+	private static void creaArbolLTE(File ficheroGSM_GEXTLTECELL){
+		mapaGSMLTE = new TreeMap<String,TreeMap<Integer,TreeMap<String,String>>>();
+		try (FileReader fr = new FileReader(ficheroGSM_GEXTLTECELL); BufferedReader br = new BufferedReader(fr)) {
+			String sCabeceraFichero = br.readLine();
+			TreeMap<String, Integer> mapaCabeceraFicheroGSMLTE = retornaMapaCabecera(sCabeceraFichero);
+			String sValoresParametros = br.readLine();
+			while (sValoresParametros != null) {
+				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
+				if (!mapaGSMLTE.containsKey(aValoresParametros[mapaCabeceraFicheroGSMLTE.get(sNeid)])) {
+					mapaGSMLTE.put(aValoresParametros[mapaCabeceraFicheroGSMLTE.get(sNeid)],
+							new TreeMap<Integer, TreeMap<String, String>>());
+				}
+				if(!mapaGSMLTE.get(aValoresParametros[mapaCabeceraFicheroGSMLTE.get(sNeid)])
+						.containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMLTE.get(sEXTLTECELLID)]))){
+					mapaGSMLTE.get(aValoresParametros[mapaCabeceraFicheroGSMLTE.get(sNeid)])
+					.put(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMLTE.get(sEXTLTECELLID)]),new TreeMap<String,String>());
+				}
+				if(!mapaGSMLTE.get(aValoresParametros[mapaCabeceraFicheroGSMLTE.get(sNeid)])
+						.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMLTE.get(sEXTLTECELLID)]))
+						.containsKey("EXTLTECELLNAME")){
+					mapaGSMLTE.get(aValoresParametros[mapaCabeceraFicheroGSMLTE.get(sNeid)])
+					.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMLTE.get(sEXTLTECELLID)]))
+					.put("EXTLTECELLNAME",aValoresParametros[mapaCabeceraFicheroGSMLTE.get("EXTLTECELLNAME")]);
+				}
+				if(!mapaGSMLTE.get(aValoresParametros[mapaCabeceraFicheroGSMLTE.get(sNeid)])
+						.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMLTE.get(sEXTLTECELLID)]))
+						.containsKey(sFecha)){
+					mapaGSMLTE.get(aValoresParametros[mapaCabeceraFicheroGSMLTE.get(sNeid)])
+					.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMLTE.get(sEXTLTECELLID)]))
+					.put(sFecha,aValoresParametros[mapaCabeceraFicheroGSMLTE.get(sFecha)]);
+				}
+				
+				sValoresParametros = br.readLine();
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	private static void escribeFicheroGSM_G2GNCELL(File ficheroGSM_G2GNCELL, File ficheroSalidaGSM_G2GNCELL) {
 		TreeMap<String, String> arbolMapaValor = new TreeMap<String, String>();
@@ -1126,100 +773,81 @@ public class Prueba {
 			while (sValoresParametros != null) {
 
 				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
-				arbolMapaValor.put("BSC_SOURCE", aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)]);
-				arbolMapaValor.put(sCellIndexSource,
-						aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexSource)]);
-				arbolMapaValor.put(sCellIndexNeigh,
-						aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexNeigh)]);
+				arbolMapaValor.put(sBSC_SOURCE, aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)]);
+				arbolMapaValor.put(sCellIndexSource,aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexSource)]);
+				arbolMapaValor.put(sCellIndexNeigh,aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexNeigh)]);
 
-				if (mapaGCELLCellIdParametroValor
-						.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)].replaceAll("\"", ""))
-						.containsKey(UtilidadesTexto.dameValorEntero(
-								aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexSource)]))) {
+				if (mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)])
+						.containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexSource)]))) {
 					sRC2GNCELLNAME = mapaGCELLCellIdParametroValor
-							.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)].replaceAll("\"", ""))
-							.get(UtilidadesTexto.dameValorEntero(
-									aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexSource)]))
+							.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)])
+							.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexSource)]))
 							.get("CELLNAME");
 
 					arbolMapaValor.put("SRC2GNCELLNAME", sRC2GNCELLNAME);
 					if (mapaGCELLCellIdParametroValor
-							.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)].replaceAll("\"", ""))
-							.get(UtilidadesTexto.dameValorEntero(
-									aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexSource)]))
+							.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)])
+							.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexSource)]))
 							.containsKey("NCC")) {
 						sNCC = mapaGCELLCellIdParametroValor
-								.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)].replaceAll("\"", ""))
-								.get(UtilidadesTexto.dameValorEntero(
-										aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexSource)]))
+								.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)])
+								.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexSource)]))
 								.get("NCC");
 						arbolMapaValor.put("NCC", sNCC);
 					}
 					if (mapaGCELLCellIdParametroValor
-							.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)].replaceAll("\"", ""))
-							.get(UtilidadesTexto.dameValorEntero(
-									aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexSource)]))
+							.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)])
+							.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexSource)]))
 							.containsKey("BCC")) {
 						sBCC = mapaGCELLCellIdParametroValor
-								.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)].replaceAll("\"", ""))
-								.get(UtilidadesTexto.dameValorEntero(
-										aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexSource)]))
+								.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)])
+								.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexSource)]))
 								.get("BCC");
 						arbolMapaValor.put("BCC", sBCC);
 					}
 				}
-				if (mapaGCELLCellIdParametroValor
-						.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)].replaceAll("\"", ""))
-						.get(UtilidadesTexto.dameValorEntero(
-								aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexSource)]))
+				if (mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)])
+						.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexSource)]))
 						.containsKey("BCCH")) {
 					sBCCH = mapaGCELLCellIdParametroValor
-							.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)].replaceAll("\"", ""))
-							.get(UtilidadesTexto.dameValorEntero(
-									aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexSource)]))
+							.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)])
+							.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexSource)]))
 							.get("BCCH");
 					arbolMapaValor.put("BCCH", sBCCH);
 				}
 
 				if (mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)])
-						.containsKey(UtilidadesTexto.dameValorEntero(
-								aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexNeigh)]))) {
+						.containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexNeigh)]))) {
 					sNRC2GNCELLNAME = mapaGCELLCellIdParametroValor
 							.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)])
-							.get(UtilidadesTexto.dameValorEntero(
-									aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexNeigh)]))
+							.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexNeigh)]))
 							.get("CELLNAME");
 					arbolMapaValor.put("NBR2GNCELLNAME", sNRC2GNCELLNAME);
 					if (mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)])
-							.get(UtilidadesTexto.dameValorEntero(
-									aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexNeigh)]))
+							.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexNeigh)]))
 							.containsKey("NCC")) {
 						NBR2GNCC = mapaGCELLCellIdParametroValor
 								.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)])
-								.get(UtilidadesTexto.dameValorEntero(
-										aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexNeigh)]))
+								.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexNeigh)]))
 								.get("NCC");
 						arbolMapaValor.put("NBR2GNCC", NBR2GNCC);
 					}
 					if (mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)])
-							.get(UtilidadesTexto.dameValorEntero(
-									aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexNeigh)]))
+							.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexNeigh)]))
 							.containsKey("BCC")) {
 						NBR2GBCC = mapaGCELLCellIdParametroValor
 								.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)])
-								.get(UtilidadesTexto.dameValorEntero(
-										aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexNeigh)]))
+								.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexNeigh)]))
 								.get("BCC");
+						
 						arbolMapaValor.put("NBR2GBCC", NBR2GBCC);
 					}
 					if (mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)])
-							.get(UtilidadesTexto.dameValorEntero(
-									aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexNeigh)]))
+							.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexNeigh)]))
 							.containsKey("BCCH")) {
-						NBR2GNCC = mapaGCELLCellIdParametroValor
+						NBR2GBCCH = mapaGCELLCellIdParametroValor
 								.get(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sNeid)])
-								.get(UtilidadesTexto.dameValorEntero(
-										aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexNeigh)]))
+								.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGSMG2GNCELL.get(sCellIndexNeigh)]))
 								.get("BCCH");
 						arbolMapaValor.put("NBR2GBCCH", NBR2GBCCH);
 					}
@@ -1261,6 +889,7 @@ public class Prueba {
 			System.out.println("Error en la escritura del fichero");
 		}
 	}
+	
 	private static void escribeFicheroGSMBTS(File ficheroGSMBTS_entrada, File ficheroSalida_GSMBTS,String[] aParametrosABuscar,
 			String[] aParametrosCabecera){
 		TreeMap<String, String> arbolParametroValor;
@@ -1279,7 +908,7 @@ public class Prueba {
 			while (sValoresParametros != null) {
 				arbolParametroValor = new TreeMap<String, String>();
 				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
-				arbolParametroValor.put("ControllerName", aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
+				arbolParametroValor.put(sControllerName, aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
 				arbolParametroValor.put(sBTSId, aValoresParametros[mapaCabeceraFichero.get(sBTSId)]);
 				for (String sParametro : aParametrosABuscar) {
 					if(mapaCabeceraFichero.containsKey(sParametro)){
@@ -1298,6 +927,7 @@ public class Prueba {
 		}
 				
 	}
+	
 	private static void escribeFicheroGSMBTSRET(File ficheroGSMBTSRET_entrada,File ficheroSalida_GSMBTSRET,String[] aParametrosABuscar,
 			String[] aParametrosCabecera){
 		TreeMap<String, String> arbolParametroValor;
@@ -1317,7 +947,7 @@ public class Prueba {
 			while (sValoresParametros != null) {
 				arbolParametroValor = new TreeMap<String, String>();
 				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
-				arbolParametroValor.put("ControllerName", aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
+				arbolParametroValor.put(sControllerName, aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
 				arbolParametroValor.put(sBTSId, aValoresParametros[mapaCabeceraFichero.get(sBTSId)]);
 				if(mapaGSMBTS.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNeid)])){
 					if(mapaGSMBTS.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
@@ -1337,7 +967,8 @@ public class Prueba {
 						arbolParametroValor.put(sParametro, aValoresParametros[mapaCabeceraFichero.get(sParametro)]);
 					}
 				}
-			sValoresParametros = br.readLine();
+				escribirFichero(bw, arbolParametroValor, aParametrosCabecera);
+				sValoresParametros = br.readLine();
 			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -1348,9 +979,67 @@ public class Prueba {
 		}
 		
 	}
-	private static void escribeFicheroGSM_BTSRETDEVICEDATA(File ficheroGSMBTSRETDEVICEDATA_entrada, File ficheroSalida_GSMBTSRETDEVICEDATA,
+	
+	private static void escribeFicheroGSM_BTSRETDEVICEDATA_SUBUNIT(File ficheroGSMBTSRETDEVICEDATA_entrada, File ficheroSalida_GSMBTSRETDEVICEDATA,
 			String[] aParametrosABuscar,String[] aParametrosCabecera){
-		// TODO
+		TreeMap<String, String> arbolParametroValor;
+		String sNombreBTS = "---";
+		String sNombreDevice = "---";
+		try (FileReader fr = new FileReader(ficheroGSMBTSRETDEVICEDATA_entrada);
+				BufferedReader br = new BufferedReader(fr);
+				BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroSalida_GSMBTSRETDEVICEDATA))) {
+			String sCabeceraFichero = br.readLine();
+			TreeMap<String, Integer> mapaCabeceraFichero = retornaMapaCabecera(sCabeceraFichero);
+			StrBuilder compositorCabecera = new StrBuilder();
+			for (String sParametro : aParametrosCabecera) {
+				compositorCabecera.append(sParametro);
+				compositorCabecera.appendSeparator(",");
+			}
+			bw.write(compositorCabecera.toString().substring(0, compositorCabecera.size() - 1) + "\r\n");
+			String sValoresParametros = br.readLine();
+			while (sValoresParametros != null) {
+				arbolParametroValor = new TreeMap<String, String>();
+				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
+				arbolParametroValor.put(sControllerName, aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
+				arbolParametroValor.put(sBTSId, aValoresParametros[mapaCabeceraFichero.get(sBTSId)]);
+				if(mapaGSMBTS.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNeid)])){
+					if(mapaGSMBTS.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).containsKey(aValoresParametros[mapaCabeceraFichero.get(sBTSId)])){
+						if(mapaGSMBTS.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(aValoresParametros[mapaCabeceraFichero.get(sBTSId)]).containsKey(sBTSNAME)){
+							sNombreBTS = mapaGSMBTS.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+									.get(aValoresParametros[mapaCabeceraFichero.get(sBTSId)])
+									.get(sBTSNAME);
+							arbolParametroValor.put(sBTSNAME, sNombreBTS);
+						}	
+					}
+				}
+				if(mapaGSMBTSRET.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNeid)])){	
+					if(mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).containsKey(aValoresParametros[mapaCabeceraFichero.get(sBTSId)])){
+						if(mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(aValoresParametros[mapaCabeceraFichero.get(sBTSId)]).containsKey(aValoresParametros[mapaCabeceraFichero.get(sDeviceNo)])){
+							if(mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(aValoresParametros[mapaCabeceraFichero.get(sBTSId)]).get(aValoresParametros[mapaCabeceraFichero.get(sDeviceNo)]).containsKey(sDeviceName)){
+								sNombreDevice = mapaGSMBTSRET.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(aValoresParametros[mapaCabeceraFichero.get(sBTSId)]).get(aValoresParametros[mapaCabeceraFichero.get(sDeviceNo)]).get(sDeviceName);
+								arbolParametroValor.put(sDeviceName,sNombreDevice);
+							}
+						}
+					}
+				}
+				for (String sParametro : aParametrosABuscar) {
+					if(sParametro.equalsIgnoreCase("DEVICENO")){
+						String sParametroAux = "DEVICE";
+						arbolParametroValor.put(sParametroAux, aValoresParametros[mapaCabeceraFichero.get(sParametro)]);
+					}else{
+						arbolParametroValor.put(sParametro, aValoresParametros[mapaCabeceraFichero.get(sParametro)]);
+					}
+				}
+				escribirFichero(bw, arbolParametroValor, aParametrosCabecera);
+				sValoresParametros = br.readLine();
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private static void escribeFicheroGSM(File ficheroGSM_entrada, File ficheroSalida_GSM, String[] aParametrosABuscar,
@@ -1375,41 +1064,36 @@ public class Prueba {
 			while (sValoresParametros != null) {
 				arbolParametroValor = new TreeMap<String, String>();
 				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
-				arbolParametroValor.put("ControllerName", aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
+				arbolParametroValor.put(sControllerName, aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
 				arbolParametroValor.put(sCellIndex, aValoresParametros[mapaCabeceraFichero.get(sCellIndex)]);
 
-				if (mapaGCELLCellIdParametroValor
-						.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNeid)].replaceAll("\"", ""))) {
+				if (mapaGCELLCellIdParametroValor.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNeid)])) {
 					if (mapaGCELLCellIdParametroValor
-							.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)].replaceAll("\"", ""))
-							.containsKey(UtilidadesTexto
-									.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sCellIndex)]))) {
+							.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+							.containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sCellIndex)]))) {
 						sNombreCelda = mapaGCELLCellIdParametroValor
-								.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)].replaceAll("\"", ""))
-								.get(UtilidadesTexto
-										.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sCellIndex)]))
+								.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+								.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sCellIndex)]))
 								.get("CELLNAME");
 						arbolParametroValor.put("CELLNAME", sNombreCelda);
 					}
 				}
 				if (mapaGCELLCellIdParametroValor
-						.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNeid)].replaceAll("\"", ""))) {
+						.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNeid)])) {
 					if (mapaGCELLCellIdParametroValor
-							.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)].replaceAll("\"", ""))
-							.containsKey(UtilidadesTexto
-									.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sCellIndex)]))) {
+							.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+							.containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sCellIndex)]))) {
 						sCellIdentificador = mapaGCELLCellIdParametroValor
-								.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)].replaceAll("\"", ""))
-								.get(UtilidadesTexto
-										.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sCellIndex)]))
+								.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+								.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sCellIndex)]))
 								.get("CELLID");
 						arbolParametroValor.put("CI", sCellIdentificador);
 					}
 				}
 				for (String sParametro : aParametrosABuscar) {
-					if(sParametro.equalsIgnoreCase("CMEPRIOR")){
-						sParametro = "PRIOR";
-					}
+//					if(sParametro.equalsIgnoreCase("CMEPRIOR")){
+//						String sParametroAux = "PRIOR";
+//					}
 					if(mapaCabeceraFichero.containsKey(sParametro)){
 						arbolParametroValor.put(sParametro, aValoresParametros[mapaCabeceraFichero.get(sParametro)]);
 					}
@@ -1426,137 +1110,268 @@ public class Prueba {
 
 	}
 
-//	private static void escribeFicheroGSM_GCELLAMRQUL(File ficheroGSM_GCELLAMRQUL, File ficheroSalida_GSM_GCELLAMRQUL) {
-//		TreeMap<String, String> arbolGSM_GCELLAMRQUL;
-//		String[] aParametrosGSM_GCELLAMRQUL = retornaParametrosABuscarGCELLAMRQUL();
-//		String sNombreCelda = "---";
-//		String sCellIdentificador = "---";
-//		try (FileReader fr = new FileReader(ficheroGSM_GCELLAMRQUL);
-//				BufferedReader br = new BufferedReader(fr);
-//				BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroSalida_GSM_GCELLAMRQUL))) {
-//			String sCabeceraFichero = br.readLine();
-//			TreeMap<String, Integer> mapaCabeceraFicheroGCELLAMRQUL = retornaMapaCabecera(sCabeceraFichero);
-//			StrBuilder compositorCabecera = new StrBuilder();
-//			for (String sParametro : retornaParametrosCabeceraGSM_GCELLAMRQUL()) {
-//				compositorCabecera.append(sParametro);
-//				compositorCabecera.appendSeparator(",");
-//			}
-//			bw.write(compositorCabecera.toString().substring(0, compositorCabecera.size() - 1) + "\r\n");
-//			String sValoresParametros = br.readLine();
-//			while (sValoresParametros != null) {
-//				arbolGSM_GCELLAMRQUL = new TreeMap<String, String>();
-//				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
-//				arbolGSM_GCELLAMRQUL.put("ControllerName",
-//						aValoresParametros[mapaCabeceraFicheroGCELLAMRQUL.get(sNeid)]);
-//				arbolGSM_GCELLAMRQUL.put(sCellIndex,
-//						aValoresParametros[mapaCabeceraFicheroGCELLAMRQUL.get(sCellIndex)]);
-//				if (mapaGCELLCellIdParametroValor.containsKey(
-//						aValoresParametros[mapaCabeceraFicheroGCELLAMRQUL.get(sNeid)].replaceAll("\"", ""))) {
-//					if (mapaGCELLCellIdParametroValor
-//							.get(aValoresParametros[mapaCabeceraFicheroGCELLAMRQUL.get(sNeid)].replaceAll("\"", ""))
-//							.containsKey(UtilidadesTexto.dameValorEntero(
-//									aValoresParametros[mapaCabeceraFicheroGCELLAMRQUL.get(sCellIndex)]))) {
-//						sNombreCelda = mapaGCELLCellIdParametroValor
-//								.get(aValoresParametros[mapaCabeceraFicheroGCELLAMRQUL.get(sNeid)].replaceAll("\"", ""))
-//								.get(UtilidadesTexto.dameValorEntero(
-//										aValoresParametros[mapaCabeceraFicheroGCELLAMRQUL.get(sCellIndex)]))
-//								.get(sCellName);
-//						arbolGSM_GCELLAMRQUL.put("CELLNAME", sNombreCelda);
-//					}
-//				}
-//				if (mapaGCELLCellIdParametroValor.containsKey(
-//						aValoresParametros[mapaCabeceraFicheroGCELLAMRQUL.get(sNeid)].replaceAll("\"", ""))) {
-//					if (mapaGCELLCellIdParametroValor
-//							.get(aValoresParametros[mapaCabeceraFicheroGCELLAMRQUL.get(sNeid)].replaceAll("\"", ""))
-//							.containsKey(UtilidadesTexto
-//									.dameValorEntero(aValoresParametros[mapaCabeceraFicheroGCELLAMRQUL.get(sCellIndex)]
-//											.replaceAll("\"", "")))) {
-//						sCellIdentificador = mapaGCELLCellIdParametroValor
-//								.get(aValoresParametros[mapaCabeceraFicheroGCELLAMRQUL.get(sNeid)].replaceAll("\"", ""))
-//								.get(UtilidadesTexto.dameValorEntero(
-//										aValoresParametros[mapaCabeceraFicheroGCELLAMRQUL.get(sCellIndex)]))
-//								.get("CELLID");
-//						arbolGSM_GCELLAMRQUL.put("CI", sCellIdentificador);
-//					}
-//				}
-//				for (String sParametro : aParametrosGSM_GCELLAMRQUL) {
-//					arbolGSM_GCELLAMRQUL.put(sParametro,
-//							aValoresParametros[mapaCabeceraFicheroGCELLAMRQUL.get(sParametro)]);
-//				}
-//				escribirFichero(bw, arbolGSM_GCELLAMRQUL, retornaParametrosCabeceraGSM_GCELLAMRQUL());
-//				sValoresParametros = br.readLine();
-//			}
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
+	private static void escribeFicheroGSM_LTE(File ficheroLTE_entrada, File ficheroSalida_LTE, String[] aParametrosABuscar,
+			String[] aParametrosCabecera) {
 
-//	private static void escribeFicheroGSM_GCELLBASICPARA(File ficheroGSM_GCELLBASICPARA,
-//			File ficheroSalida_GSM_GCELLBASICPARA) {
-//		TreeMap<String, String> arbolGSM_GCELLBASICPARA;
-//		String[] aParametrosGSM_GCELLBASCISPARA = retornaParametrosABuscarGCELLBASICPARA();
-//		String sNombreCelda = "---";
-//		String sCellIdentificador = "---";
-//		try (FileReader fr = new FileReader(ficheroGSM_GCELLBASICPARA);
-//				BufferedReader br = new BufferedReader(fr);
-//				BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroSalida_GSM_GCELLBASICPARA))) {
-//			String sCabeceraFichero = br.readLine();
-//			TreeMap<String, Integer> mapaCabeceraFicheroGCELLBASICPARA = retornaMapaCabecera(sCabeceraFichero);
-//			StrBuilder compositorCabecera = new StrBuilder();
-//			for (String sParametro : retornaParametrosCabeceraGSM_GCELLBASICPARA()) {
-//				compositorCabecera.append(sParametro);
-//				compositorCabecera.appendSeparator(",");
-//			}
-//			bw.write(compositorCabecera.toString().substring(0, compositorCabecera.size() - 1) + "\r\n");
-//			String sValoresParametros = br.readLine();
-//			while (sValoresParametros != null) {
-//				arbolGSM_GCELLBASICPARA = new TreeMap<String, String>();
-//				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
-//				arbolGSM_GCELLBASICPARA.put("ControllerName",
-//						aValoresParametros[mapaCabeceraFicheroGCELLBASICPARA.get(sNeid)]);
-//				arbolGSM_GCELLBASICPARA.put(sCellIndex,
-//						aValoresParametros[mapaCabeceraFicheroGCELLBASICPARA.get(sCellIndex)]);
-//				if (mapaGCELLCellIdParametroValor
-//						.containsKey(aValoresParametros[mapaCabeceraFicheroGCELLBASICPARA.get(sNeid)])) {
-//					if (mapaGCELLCellIdParametroValor
-//							.get(aValoresParametros[mapaCabeceraFicheroGCELLBASICPARA.get(sNeid)])
-//							.containsKey(UtilidadesTexto.dameValorEntero(
-//									aValoresParametros[mapaCabeceraFicheroGCELLBASICPARA.get(sCellIndex)]))) {
-//						sNombreCelda = mapaGCELLCellIdParametroValor
-//								.get(aValoresParametros[mapaCabeceraFicheroGCELLBASICPARA.get(sNeid)])
-//								.get(UtilidadesTexto.dameValorEntero(
-//										aValoresParametros[mapaCabeceraFicheroGCELLBASICPARA.get(sCellIndex)]))
-//								.get("CELLNAME");
-//						arbolGSM_GCELLBASICPARA.put("CELLNAME", sNombreCelda);
-//					}
-//				}
-//				if (mapaGCELLCellIdParametroValor
-//						.containsKey(aValoresParametros[mapaCabeceraFicheroGCELLBASICPARA.get(sNeid)])) {
-//					if (mapaGCELLCellIdParametroValor
-//							.get(aValoresParametros[mapaCabeceraFicheroGCELLBASICPARA.get(sNeid)])
-//							.containsKey(UtilidadesTexto.dameValorEntero(
-//									aValoresParametros[mapaCabeceraFicheroGCELLBASICPARA.get(sCellIndex)]))) {
-//						sCellIdentificador = mapaGCELLCellIdParametroValor
-//								.get(aValoresParametros[mapaCabeceraFicheroGCELLBASICPARA.get(sNeid)])
-//								.get(UtilidadesTexto.dameValorEntero(
-//										aValoresParametros[mapaCabeceraFicheroGCELLBASICPARA.get(sCellIndex)]))
-//								.get("CELLID");
-//						arbolGSM_GCELLBASICPARA.put("CI", sCellIdentificador);
-//					}
-//				}
-//				for (String sParametro : aParametrosGSM_GCELLBASCISPARA) {
-//					arbolGSM_GCELLBASICPARA.put(sParametro,
-//							aValoresParametros[mapaCabeceraFicheroGCELLBASICPARA.get(sParametro)]);
-//				}
-//				escribirFichero(bw, arbolGSM_GCELLBASICPARA, retornaParametrosCabeceraGSM_GCELLBASICPARA());
-//				sValoresParametros = br.readLine();
-//			}
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
+		TreeMap<String, String> arbolParametroValor;
+		try (FileReader fr = new FileReader(ficheroLTE_entrada);
+				BufferedReader br = new BufferedReader(fr);
+				BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroSalida_LTE))) {
+			String sCabeceraFichero = br.readLine();
+			TreeMap<String, Integer> mapaCabeceraFichero = retornaMapaCabecera(sCabeceraFichero);
+			StrBuilder compositorCabecera = new StrBuilder();
+			for (String sParametro : aParametrosCabecera) {
+				compositorCabecera.append(sParametro);
+				compositorCabecera.appendSeparator(",");
+			}
+			bw.write(compositorCabecera.toString().substring(0, compositorCabecera.size() - 1) + "\r\n");
+			String sValoresParametros = br.readLine();
+			while (sValoresParametros != null) {
+				arbolParametroValor = new TreeMap<String, String>();
+				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
+				arbolParametroValor.put(sBSC_SOURCE, aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
+				arbolParametroValor.put(sEXT3GCellIndex, aValoresParametros[mapaCabeceraFichero.get(sEXTLTECELLID)]);
+
+				for (String sParametro : aParametrosABuscar) {
+					if(sParametro.equalsIgnoreCase("EXTLTECELLNAME")){
+						String sParametroAux = "EXT3GCELLNAME";
+						if(mapaCabeceraFichero.containsKey(sParametro)){
+							arbolParametroValor.put(sParametroAux, aValoresParametros[mapaCabeceraFichero.get(sParametro)]);
+						}
+					}else{
+						if(mapaCabeceraFichero.containsKey(sParametro)){
+							arbolParametroValor.put(sParametro, aValoresParametros[mapaCabeceraFichero.get(sParametro)]);
+						}
+					}
+				}
+				escribirFichero(bw, arbolParametroValor, aParametrosCabecera);
+				sValoresParametros = br.readLine();
+			}
+
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found exception en GCELL2GBA1");
+		} catch (IOException e) {
+			System.out.println("IO exception en GCELL2GBA1");
+		}
+
+	}
+
+	private static void escribeFicheroGSM_LTENCELL(File ficheroGSM_GLTENCELL, File ficheroSalida_GSM_GLTENCELL,
+			String[] aParametrosABuscar, String[] aParametrosCabecera) {
+		TreeMap<String, String> arbolParametroValor;
+		String sNombreCelda = "---";
+		String sNombreCeldaVecina = "---";
+		try (FileReader fr = new FileReader(ficheroGSM_GLTENCELL);
+				BufferedReader br = new BufferedReader(fr);
+				BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroSalida_GSM_GLTENCELL))) {
+			String sCabeceraFichero = br.readLine();
+			TreeMap<String, Integer> mapaCabeceraFichero = retornaMapaCabecera(sCabeceraFichero);
+			StrBuilder compositorCabecera = new StrBuilder();
+			for (String sParametro : aParametrosCabecera) {
+				compositorCabecera.append(sParametro);
+				compositorCabecera.appendSeparator(",");
+			}
+			bw.write(compositorCabecera.toString().substring(0, compositorCabecera.size() - 1) + "\r\n");
+			String sValoresParametros = br.readLine();
+			while (sValoresParametros != null) {
+				arbolParametroValor = new TreeMap<String, String>();
+				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
+				arbolParametroValor.put(sBSC_SOURCE, aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
+				if(mapaGCELLCellIdParametroValor.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNeid)])){
+					if(mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+							.containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("SRCLTENCELLID")]))){
+						if(mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+							.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("SRCLTENCELLID")]))
+							.containsKey(sCellName)){
+							sNombreCelda = mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+									.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("SRCLTENCELLID")]))
+									.get(sCellName);
+							arbolParametroValor.put(sSRCLTENCELLNAME, sNombreCelda);
+						}
+					}
+				}
+				if(mapaGSMLTE.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNeid)])){
+					if(mapaGSMLTE.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+							.containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("NBRLTENCELLID")]))){
+
+						if(mapaGSMLTE.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+							.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("NBRLTENCELLID")]))
+							.containsKey("EXTLTECELLNAME")){
+							sNombreCeldaVecina = mapaGSMLTE.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+									.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("NBRLTENCELLID")]))
+									.get("EXTLTECELLNAME");
+							arbolParametroValor.put(sNBRLTENCELLNAME, sNombreCeldaVecina);
+						}
+					}
+				}
+
+				for (String sParametro : aParametrosABuscar) {
+					if(mapaCabeceraFichero.containsKey(sParametro)){
+						arbolParametroValor.put(sParametro, aValoresParametros[mapaCabeceraFichero.get(sParametro)]);
+					}
+				}
+				escribirFichero(bw, arbolParametroValor, aParametrosCabecera);
+				sValoresParametros = br.readLine();
+			}
+
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found exception en GCELL2GBA1");
+		} catch (IOException e) {
+			System.out.println("IO exception en GCELL2GBA1");
+		}
+	}
+	
+	private static void escribeFicheroGSM_GEXT(File ficheroGSM_entrada, File ficheroSalida_GSM, String[] aParametrosABuscar,
+			String[] aParametrosCabecera,String sIndiceTecnologia) {
+
+		TreeMap<String, String> arbolParametroValor;
+		String sNombreCelda = "---";
+		String sCellIdentificador = "---";
+
+		try (FileReader fr = new FileReader(ficheroGSM_entrada);
+				BufferedReader br = new BufferedReader(fr);
+				BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroSalida_GSM))) {
+			String sCabeceraFichero = br.readLine();
+			TreeMap<String, Integer> mapaCabeceraFichero = retornaMapaCabecera(sCabeceraFichero);
+			StrBuilder compositorCabecera = new StrBuilder();
+			for (String sParametro : aParametrosCabecera) {
+				compositorCabecera.append(sParametro);
+				compositorCabecera.appendSeparator(",");
+			}
+			bw.write(compositorCabecera.toString().substring(0, compositorCabecera.size() - 1) + "\r\n");
+			String sValoresParametros = br.readLine();
+			while (sValoresParametros != null) {
+				arbolParametroValor = new TreeMap<String, String>();
+				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
+				arbolParametroValor.put(sBSC_SOURCE, aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
+				arbolParametroValor.put(sIndiceTecnologia, aValoresParametros[mapaCabeceraFichero.get(sIndiceTecnologia)]);
+
+				if (mapaGCELLCellIdParametroValor.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNeid)])) {
+					if (mapaGCELLCellIdParametroValor
+							.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+							.containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sIndiceTecnologia)]))) {
+						sNombreCelda = mapaGCELLCellIdParametroValor
+								.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+								.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sIndiceTecnologia)]))
+								.get(sCellName);
+						arbolParametroValor.put(sCellName, sNombreCelda);
+					}
+				}
+				if (mapaGCELLCellIdParametroValor
+						.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNeid)])) {
+					if (mapaGCELLCellIdParametroValor
+							.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+							.containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sIndiceTecnologia)]))) {
+						sCellIdentificador = mapaGCELLCellIdParametroValor
+								.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+								.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sIndiceTecnologia)]))
+								.get("CELLID");
+						arbolParametroValor.put("CI", sCellIdentificador);
+					}
+				}
+				for (String sParametro : aParametrosABuscar) {
+					if(sParametro.equalsIgnoreCase("CMEPRIOR")){
+						String sParametroAux = "PRIOR";
+						if(mapaCabeceraFichero.containsKey(sParametro)){
+							arbolParametroValor.put(sParametroAux, aValoresParametros[mapaCabeceraFichero.get(sParametro)]);
+						}
+					}else{				
+						if(mapaCabeceraFichero.containsKey(sParametro)){
+							arbolParametroValor.put(sParametro, aValoresParametros[mapaCabeceraFichero.get(sParametro)]);
+						}
+					}
+				}
+				escribirFichero(bw, arbolParametroValor, aParametrosCabecera);
+				sValoresParametros = br.readLine();
+			}
+
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found exception en GCELL2GBA1");
+		} catch (IOException e) {
+			System.out.println("IO exception en GCELL2GBA1");
+		}
+
+	}
+	
+	private static void escribeFicheroGSM_GTRX(File ficheroGSM_entrada, File ficheroSalida_GSM, String[] aParametrosABuscar,
+			String[] aParametrosCabecera) {
+
+		TreeMap<String, String> arbolParametroValor;
+		String sCellIndexA = "---";
+		String sNombreCelda = "---";
+		String sCellIdentificador = "---";
+
+		try (FileReader fr = new FileReader(ficheroGSM_entrada);
+				BufferedReader br = new BufferedReader(fr);
+				BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroSalida_GSM))) {
+			String sCabeceraFichero = br.readLine();
+			TreeMap<String, Integer> mapaCabeceraFichero = retornaMapaCabecera(sCabeceraFichero);
+			StrBuilder compositorCabecera = new StrBuilder();
+			for (String sParametro : aParametrosCabecera) {
+				compositorCabecera.append(sParametro);
+				compositorCabecera.appendSeparator(",");
+			}
+			bw.write(compositorCabecera.toString().substring(0, compositorCabecera.size() - 1) + "\r\n");
+			String sValoresParametros = br.readLine();
+			while (sValoresParametros != null) {
+				arbolParametroValor = new TreeMap<String, String>();
+				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
+				arbolParametroValor.put(sControllerName, aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
+				if(mapaGSMGTRX.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNeid)])){
+					if(mapaGSMGTRX.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).containsKey(aValoresParametros[mapaCabeceraFichero.get(sTRXID)])){
+						if(mapaGSMGTRX.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(aValoresParametros[mapaCabeceraFichero.get(sTRXID)]).containsKey(sCellId)){
+							sCellIndexA = mapaGSMGTRX.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(aValoresParametros[mapaCabeceraFichero.get(sTRXID)]).get(sCellId);
+							arbolParametroValor.put(sCellIndex, sCellIndexA);
+						}
+					}
+				}
+				if(!sCellIndexA.equals("---")){
+					if (mapaGCELLCellIdParametroValor.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNeid)])) {
+						if (mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+								.containsKey(UtilidadesTexto.dameValorEntero(sCellIndexA))){
+							if(mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+								.get(UtilidadesTexto.dameValorEntero(sCellIndexA))
+								.containsKey(sCellName)){
+									sNombreCelda = mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+											.get(UtilidadesTexto.dameValorEntero(sCellIndexA))
+											.get(sCellName);
+									arbolParametroValor.put(sCellName, sNombreCelda);
+							}
+							if(mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+									.get(UtilidadesTexto.dameValorEntero(sCellIndexA))
+									.containsKey("CELLID")){
+									sCellIdentificador = mapaGCELLCellIdParametroValor.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+												.get(UtilidadesTexto.dameValorEntero(sCellIndexA))
+												.get("CELLID");
+									arbolParametroValor.put("CI", sCellIdentificador);
+							}
+						}
+					}
+				}
+				
+				for (String sParametro : aParametrosABuscar) {
+					if(sParametro.equalsIgnoreCase("CMEPRIOR")){
+						String sParametroAux = "PRIOR";
+						if(mapaCabeceraFichero.containsKey(sParametro)){
+							arbolParametroValor.put(sParametroAux, aValoresParametros[mapaCabeceraFichero.get(sParametro)]);
+						}
+					}else{				
+						if(mapaCabeceraFichero.containsKey(sParametro)){
+							arbolParametroValor.put(sParametro, aValoresParametros[mapaCabeceraFichero.get(sParametro)]);
+						}
+					}
+				}
+				escribirFichero(bw, arbolParametroValor, aParametrosCabecera);
+				sValoresParametros = br.readLine();
+			}
+
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found exception en GCELL2GBA1");
+		} catch (IOException e) {
+			System.out.println("IO exception en GCELL2GBA1");
+		}
+
+	}
 
 	private static TreeMap<String, String> retornaParametrosABuscarGCELL() {
 		TreeMap<String, String> arbolParametrosABuscar = new TreeMap<String, String>();
@@ -1584,36 +1399,30 @@ public class Prueba {
 		aParametrosABuscar.put("ipEntrada", "ipEntrada");
 		return aParametrosABuscar;
 	}
+	
 	private static String[] retornaParametrosABuscarBTS(){
 		String[] aParametrosABuscar = {"BTSNAME","BTSDESC","BTSTYPE","ABISBYPASSMODE","ACTSTATUS","FLEXABISMODE","HOSTTYPE","INNBBULICSHAEN",
 			"INTRABBPOOLSWITCH","IPPHYTRANSTYPE","ISCONFIGEDRING","MAINBMPMODE","MAINPORTNO","MPMODE","SEPERATEMODE","SERVICEMODE","SRANMODE",
 			"TRANDETSWITCH","TSASSIGNOPTISW","WORKMODE","Fecha","Red","ipEntrada"};
 		return aParametrosABuscar;
 	}
+	
 	private static String[] retornaParametrosABuscarBTSRET(){
 		String[] aParametrosABuscar = {"DEVICE","DEVICENAME","CTRLPORTCN","CTRLPORTNO", 
 				"CTRLPORTSN","CTRLPORTSRN","POLARTYPE","RETTYPE","SCENARIO","SERIALNO","VENDORCODE","Fecha","Red","ipEntrada"};
 		return aParametrosABuscar;
 	}
-	private static String[] retornaParametrosABuscarGSMBTSRET() {
-		String[] aParametrosABuscar = { "DEVICENO", "DEVICENAME", "CTRLPORTCN", "CTRLPORTNO", "CTRLPORTSN",
-				"CTRLPORTSRN", "POLARTYPE", "RETTYPE", "SCENARIO", "SERIALNO", "VENDORCODE", "Fecha", "Red",
-				"ipEntrada" };
+	
+	private static String[] retornaParametrosABuscarBTSDEVICEDATA() {
+		String[] aParametrosABuscar = {"DEVICENO","BAND1","BAND2","BAND3","BAND4","BEARING","SUBUNITNO","TILT","SERIALNO","Fecha","Red","ipEntrada"};
 		return aParametrosABuscar;
 	}
-
-	private static String[] retornaParametrosABuscarGSMRETDEVICEDATA() {
-		String[] aParametrosABuscar = { "BAND1", "BAND2", "BAND3", "BAND4", "BEARING", "SUBUNITNO", "TILT", "SERIALNO",
-				"Fecha", "Red", "ipEntrada" };
+		
+	private static String[] retornaParametrosABuscarBTSRETSUBUNIT() {
+		String[] aParametrosABuscar = {"DEVICENO","AER","CELLID","CONNCN1","CONNCN2","CONNPN1","CONNPN2","CONNSN1","CONNSN2","CONNSRN1","CONNSRN2","SUBUNITNO","TILT","Fecha","Red","ipEntrada"};
 		return aParametrosABuscar;
 	}
-
-	private static String[] retornaParametrosABuscarGSMRETSUBUNIT() {
-		String[] aParametrosABuscar = { "AER", "CELLID", "CONNCN1", "CONNCN2", "CONNPN1", "CONNPN2", "CONNSN1",
-				"CONNSN2", "CONNSRN1", "CONNSRN2", "SUBUNITNO", "TILT", "Fecha", "Red", "ipEntrada" };
-		return aParametrosABuscar;
-	}
-
+	
 	private static String[] retornaParametrosABuscarG2GNCELL() {
 		String[] aParametrosABuscar = { "ADJHOOFFSET", "BETTERCELLLASTTIME", "BETTERCELLSTATTIME", "BQLASTTIME",
 				"BQMARGIN", "BQNCELLABSTHRESSW", "BQSTATTIME", "CHAINNCELLTYPE", "COMPCOCELLLASTTIME",
@@ -1909,6 +1718,18 @@ public class Prueba {
 		return aParametrosABuscar;
 	}
 	
+	private static String[] retornaParametrosABuscarGEXTLTECELL() {
+		String[] aParametrosABuscar = {"EXTLTECELLNAME","MCC","MNC","TAC","FREQ","PCID","EUTRANTYPE","OPNAME","ENODEBTYPE","CI",
+				"GCNOPGRPINDEX","Fecha","Red","ipEntrada"};	
+		return aParametrosABuscar;
+	}
+	
+	private static String[] retornaParametrosABuscarGLTENCELL() {
+		String[] aParametrosABuscar = {"SPTRESEL","SPTBLINDHO","SPTRAPIDSEL","NCELLPRI","Fecha","Red","ipEntrada",
+				"EUTRANNCELLHIGHTHLD","EUTRANNCELLLOWTHLD","EUTRANNCELLRXLEVMIN","NBRLTENCELLID","SRCLTENCELLID"};
+		return aParametrosABuscar;
+	}
+	
 	private static String[] retornaParametrosABuscarGTRX() {
 		String[] aParametrosABuscar ={"TRXID","ACTSTATUS","ADMSTAT","FREQ","GTRXGROUPID",
 				"ISMAINBCCH","TRXNAME","TRXNO","Fecha","Red","ipEntrada","ISTMPTRX"
@@ -1917,8 +1738,7 @@ public class Prueba {
 	}
 	
 	private static String[] retornaParametrosABuscarGTRXCHAN() {
-		String[] aParametrosABuscar ={"TRXID","ADMSTAT","CHANRSV","CHNO","CHTYPE","GPRSCHPRI",
-				"TSPRIORITY","Fecha","Red","ipEntrada"};
+		String[] aParametrosABuscar ={"TRXID","ADMSTAT","CHANRSV","CHNO","CHTYPE","GPRSCHPRI","TSPRIORITY","Fecha","Red","ipEntrada"};
 		return aParametrosABuscar;
 	}
 	
@@ -1927,6 +1747,7 @@ public class Prueba {
 				"TRXHOPINDEX","TRXMAIO","Fecha","Red","ipEntrada"};
 		return aParametrosABuscar;
 	}
+	
 	private static String[] retornaParametrosABuscarGTRXDEV() {
 		String[] aParametrosABuscar ={"TRXID","CPS","DSSTRXOFFLINE","FREQREUSEMODE",
 				"IBCATGTCIRMAIOFIXED","INHOPWROVERLOADTHRESHOLD","OPTL","OUTHOPWROVERLOADTHRESHOLD","PAOPTILEVEL","PL16QAM","PL32QAM",
@@ -1960,17 +1781,15 @@ public class Prueba {
 				"CTRLPORTSN","CTRLPORTSRN","POLARTYPE","RETTYPE","SCENARIO","SERIALNO","VENDORCODE","Fecha","Red","ipEntrada"};
 		return aParametrosCabecera;
 	}
-
-	private static String[] retornaParametrosCabeceraGSM_BTSRETDEVICEDATA() {
-		String[] aParametrosCabecera = { "ControllerName", "BTSID", "BTSNAME", "DEVICE", "DEVICENAME", "BAND1", "BAND2",
-				"BAND3", "BAND4", "BEARING", "SUBUNITNO", "TILT", "SERIALNO", "Fecha", "Red", "ipEntrada" };
+	
+	private static String[] retornaParametrosCabeceraGSM_BTSDEVICEDATA(){
+		String[] aParametrosCabecera = {"ControllerName","BTSID","BTSNAME","DEVICE","DEVICENAME","BAND1","BAND2","BAND3","BAND4","BEARING","SUBUNITNO","TILT","SERIALNO","Fecha","Red","ipEntrada"};
 		return aParametrosCabecera;
 	}
 
 	private static String[] retornaParametrosCabeceraGSM_BTSRETSUBUNIT() {
-		String[] aParametrosCabecera = { "ControllerName", "BTSID", "BTSNAME", "DEVICE", "DEVICENAME", "AER", "CELLID",
-				"CONNCN1", "CONNCN2", "CONNPN1", "CONNPN2", "CONNSN1", "CONNSN2", "CONNSRN1", "CONNSRN2", "SUBUNITNO",
-				"TILT", "Fecha", "Red", "ipEntrada" };
+		String[] aParametrosCabecera = { "ControllerName","BTSID","BTSNAME","DEVICE","DEVICENAME","AER","CELLID","CONNCN1","CONNCN2","CONNPN1","CONNPN2","CONNSN1","CONNSN2","CONNSRN1","CONNSRN2",
+				"SUBUNITNO","TILT","Fecha","Red","ipEntrada" };
 		return aParametrosCabecera;
 	}
 
@@ -2281,6 +2100,19 @@ public class Prueba {
 		return aParametrosCabecera;
 	}
 	
+	private static String[] retornaParametrosCabeceraGEXTLETCELL() {
+		String[] aParametrosCabecera = {"BSC_SOURCE","EXT3GCELLID","EXT3GCELLNAME","MCC","MNC","TAC","FREQ","PCID","EUTRANTYPE",
+				"OPNAME","ENODEBTYPE","CI","GCNOPGRPINDEX","Fecha","Red","ipEntrada"};
+		return aParametrosCabecera;
+	}
+	
+	private static String[] retornaParametrosCabeceraGLTENCELL() {
+		String[] aParametrosCabecera = {"BSC_SOURCE","SRCLTENCELLNAME","NBRLTENCELLNAME","SPTRESEL","SPTBLINDHO","SPTRAPIDSEL",
+				"NCELLPRI","Fecha","Red","ipEntrada","EUTRANNCELLHIGHTHLD","EUTRANNCELLLOWTHLD","EUTRANNCELLRXLEVMIN",
+				"NBRLTENCELLID","SRCLTENCELLID"};
+		return aParametrosCabecera;
+	}
+
 	private static String[] retornaParametrosCabeceraGTRX() {
 		String[] aParametrosCabecera = {"ControllerName","CELLNAME","CELLID","CI","TRXID","ACTSTATUS","ADMSTAT","FREQ","GTRXGROUPID",
 				"ISMAINBCCH","TRXNAME","TRXNO","Fecha","Red","ipEntrada","ISTMPTRX"};		
@@ -2311,7 +2143,6 @@ public class Prueba {
 		String[] aParametrosCabecera = {"ControllerName","CELLNAME","CELLID","CI","BVCI","NSEI","Fecha","Red","ipEntrada"};
 		return aParametrosCabecera;
 	}
-
 
 	private static TreeMap<String, Integer> retornaMapaCabecera(String sCabeceraFichero) {
 		TreeMap<String, Integer> mapaCabecera = new TreeMap<String, Integer>();
