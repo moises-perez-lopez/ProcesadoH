@@ -18,41 +18,54 @@ public class Adaptacion3G {
 	private static final String sRNCID = "RNCID";
 	private static final String sNODEBID = "NODEBID";
 	private static final String sNODEBNAME = "NODEBNAME";
+	private static final String sControllerName = "ControllerName";
+	private static final String sCellId = "CELLID";
 	
 	
-	private static TreeMap<String,Integer> arbolGNCELL;
-	private static TreeMap<String,TreeMap<Integer,String>> arbolControllerNameNodebNameNodebID;
+	private static TreeMap<String,String> arbolUCELLRncId;
+	private static TreeMap<String,TreeMap<Integer,TreeMap<String,String>>> arbolUCELL_NODEB;
 	public static void main(String[] args) {
 		
 		File carpetaEntrada = new File("C:\\Users\\Moises\\Downloads\\Murdoc\\HuaweiParser\\SALIDA_3G_BD\\");
 		File carpetaSalida = new File("C:\\Users\\Moises\\Downloads\\Murdoc\\HuaweiParser\\SALIDA_3G_BD_PROCESADOS\\");
 		
 		
-		// Creamos arbol UCELL, NEID -> RNCID
-		File fichero_UCELLRNCID = new File(carpetaEntrada + "\\U2GNCELL.txt");
+		// Creamos el arbol UCELL, NEID -> RNCID
+		File fichero_UCELLRNCID = new File(carpetaEntrada, "U2GNCELL.txt");
 		creaArbolUCELL_RNCID(fichero_UCELLRNCID);
-		File ficheroArbolUCELL1 = new File(carpetaSalida + "\\arbolUCELLRNCID.txt");
-		escribeArbol_UCELL_RNCID(ficheroArbolUCELL1);
 		
-		// Añadimos al árbol  NEID - NODEBNAME - NODEBID
-		File fichero_UCELLUNODEB = new File(carpetaEntrada + "\\UNODEB.txt");
-		creaArbol_UCELL_NODEB(fichero_UCELLUNODEB);
-		File ficheroArbol_ENODEB = new File(carpetaSalida + "\\arbolUNODEB.txt");
-		escribeArbol_UCELL_ENODEB(ficheroArbol_ENODEB);
+		// Creamos el árbol UCELL, NEID -> CELLIDS -> CELLNAME, NODEBNAME 
+		File ficheroUCELL = new File(carpetaEntrada,"UCELL.txt");
+		creaArbolUCELL_UCELL(ficheroUCELL);
 		
-		// Añadimos las celdas del fichero UCELL
-//		File fichero_UCELL = new File(carpetaEntrada + "\\UCELL.txt");
-//		creaArbolUCELL_UCELL(fichero_UCELL);
+		// Añadimos al árbol UCELL, NEID -> CELLIDS -> CELLNAME, NODEBNAME, NODEBID
+		File ficheroUCELL_ENODEB = new File(carpetaEntrada,"UNODEB.txt");
+		creaArbolUCELL_UCELL_UNODEB(ficheroUCELL_ENODEB);
 		
-		File ficheroU2GNCELL = new File(carpetaEntrada,"U2GNCELL.txt");
-		File ficheroSalida_U2GNCELL = new File(carpetaSalida,"U2GNCELL.txt");
-		escribeFicheroU2GNCELL(ficheroSalida_U2GNCELL,ficheroSalida_U2GNCELL,retornaParametrosCabeceraU2GNCELL(),retornaParametrosABuscarU2GNCELL());
+		// Escribimos el Arbol UCELL-RNCID
+//		File ficheroArbolUCELL_RNCID = new File(carpetaSalida ,"arbolUCELLRNCID.txt");
+//		escribeArbol_UCELL_RNCID(ficheroArbolUCELL_RNCID);
+		
+		// Escribimos el Arbol UCELL-NODEBNAME-CELLID
+		File ficheroArbolUCELL_NODEBNAME_CELLID = new File(carpetaSalida,"arbol_UCELL_NEID_CELLID_CELLNAME_NODEBNAME_NODEBID.txt");
+		escribeArbol_UCELL(ficheroArbolUCELL_NODEBNAME_CELLID);
+		
+						
+		// Creamos el fichero UCELL
+		File ficheroSalida_UCELL = new File(carpetaSalida,"UCELL.txt");
+		escribeFicheroUCELL(ficheroUCELL,ficheroSalida_UCELL,retornaParametrosCabeceraUCELL(),retornaParametrosABuscarUCELL());
+		
+		// Creamos el fichero UCELLADAPTRACH
+		File fichero_UCELLUCELLADAPTRACH = new File(carpetaEntrada,"UCELLADAPTRACH.txt");
+		File ficheroSalida_UCELLADAPTRACH = new File(carpetaSalida,"UCELLADAPTRACH.txt");
+		escribeFicheroUCELL_ADAPTRACH(fichero_UCELLUCELLADAPTRACH,ficheroSalida_UCELLADAPTRACH, retornaParametrosCabeceraUCELLADAPTRACH(),retornaParametrosABuscarUCELLADAPTRACH());
 		System.out.println("FIN");		
 		
 	}
 	
+	
 	private static void creaArbolUCELL_RNCID(File ficheroRNCID) {
-		arbolGNCELL = new TreeMap<String,Integer>();
+		arbolUCELLRncId = new TreeMap<String,String>();
 		try (FileReader fr = new FileReader(ficheroRNCID);
 			BufferedReader br = new BufferedReader(fr)) {
 			String sCabeceraFichero = br.readLine();
@@ -60,9 +73,9 @@ public class Adaptacion3G {
 			String sValoresParametros = br.readLine();
 			while (sValoresParametros != null) {
 				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
-				if(!arbolGNCELL.containsKey(aValoresParametros[mapaCabeceraFicheroUCELL.get(sNeid)])){
-					arbolGNCELL.put(aValoresParametros[mapaCabeceraFicheroUCELL.get(sNeid)],
-					UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroUCELL.get(sRNCID)]));
+				if(!arbolUCELLRncId.containsKey(aValoresParametros[mapaCabeceraFicheroUCELL.get(sNeid)])){
+					arbolUCELLRncId.put(aValoresParametros[mapaCabeceraFicheroUCELL.get(sNeid)],
+					aValoresParametros[mapaCabeceraFicheroUCELL.get(sRNCID)]);
 				}
 				sValoresParametros = br.readLine();
 			}
@@ -73,6 +86,49 @@ public class Adaptacion3G {
 		}
 	}
 	
+	private static void creaArbolUCELL_UCELL(File ficheroUCELL) {
+		
+		arbolUCELL_NODEB = new TreeMap<String,TreeMap<Integer,TreeMap<String,String>>>();
+		try (FileReader fr = new FileReader(ficheroUCELL);
+			BufferedReader br = new BufferedReader(fr)) {
+			String sCabeceraFichero = br.readLine();
+			TreeMap<String, Integer> mapaCabeceraFicheroUCELL = retornaMapaCabecera(sCabeceraFichero);
+			String sValoresParametros = br.readLine();
+			while (sValoresParametros != null) {
+				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
+				if(!arbolUCELL_NODEB.containsKey(aValoresParametros[mapaCabeceraFicheroUCELL.get(sNeid)])){
+					arbolUCELL_NODEB.put(aValoresParametros[mapaCabeceraFicheroUCELL.get(sNeid)], new TreeMap<Integer,TreeMap<String,String>>());
+				}
+				if(!arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFicheroUCELL.get(sNeid)])
+						.containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroUCELL.get("CELLID")]))){
+					arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFicheroUCELL.get(sNeid)])
+					.put(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroUCELL.get("CELLID")]),new TreeMap<String,String>());
+				}
+				if(!arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFicheroUCELL.get(sNeid)])
+						.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroUCELL.get("CELLID")]))
+						.containsKey("CELLNAME")){
+					arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFicheroUCELL.get(sNeid)])
+					.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroUCELL.get("CELLID")]))
+					.put("CELLNAME",aValoresParametros[mapaCabeceraFicheroUCELL.get("CELLNAME")]);
+				}
+				if(!arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFicheroUCELL.get(sNeid)])
+						.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroUCELL.get("CELLID")]))
+						.containsKey("NODEBNAME")){
+					arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFicheroUCELL.get(sNeid)])
+					.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroUCELL.get("CELLID")]))
+					.put("NODEBNAME",aValoresParametros[mapaCabeceraFicheroUCELL.get("NODEBNAME")]);
+				}
+				
+				sValoresParametros = br.readLine();
+			}
+		} catch (FileNotFoundException e) {
+			System.out.println("Excepción File Not found en arbol UCELL_UCELL");
+		} catch (IOException e) {
+			System.out.println("Excepción IO en arbol UCELL_UCELL");
+		}
+		
+	}
+	
 	private static void escribeArbol_UCELL_RNCID(File ficheroArbol_UCELLRNCID) {
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroArbol_UCELLRNCID))) {
 			StrBuilder compositorCabecera = new StrBuilder();
@@ -80,11 +136,11 @@ public class Adaptacion3G {
 			compositorCabecera.appendSeparator(",");
 			compositorCabecera.append("\"RNCID\"");
 			bw.write(compositorCabecera.toString()+"\r\n");
-			for (String sNeid : arbolGNCELL.keySet()) {
+			for (String sNeid : arbolUCELLRncId.keySet()) {
 					StrBuilder compositorValores = new StrBuilder();
 					compositorValores.append(sNeid);
 					compositorValores.appendSeparator(",");
-					compositorValores.append(arbolGNCELL.get(sNeid));
+					compositorValores.append(arbolUCELLRncId.get(sNeid));
 					compositorValores.appendSeparator(",");
 					bw.write(compositorValores.toString().substring(0, compositorValores.size()-1)+"\r\n");
 			}
@@ -94,8 +150,40 @@ public class Adaptacion3G {
 		
 	}
 	
-	private static void creaArbol_UCELL_NODEB(File fichero_UCELLUNODEB) {
-		arbolControllerNameNodebNameNodebID = new TreeMap<String,TreeMap<Integer,String>>();
+	private static void escribeArbol_UCELL(File ficheroArbolUCELL_NODEBNAME_CELLID){
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroArbolUCELL_NODEBNAME_CELLID))) {
+			StrBuilder compositorCabecera = new StrBuilder();
+			compositorCabecera.append("\"NEID\"");
+			compositorCabecera.appendSeparator(",");
+			compositorCabecera.append("\"CELLID\"");
+			compositorCabecera.appendSeparator(",");
+			compositorCabecera.append("\"CELLNAME\"");
+			compositorCabecera.appendSeparator(",");
+			compositorCabecera.append("\"NODEBID\"");
+			compositorCabecera.appendSeparator(",");
+			compositorCabecera.append("\"NODEBNAME\"");
+			bw.write(compositorCabecera.toString()+"\r\n");
+			for (String sNeid : arbolUCELL_NODEB.keySet()) {
+				for(Integer iCellid : arbolUCELL_NODEB.get(sNeid).keySet()){
+					StrBuilder compositorValores = new StrBuilder();
+					compositorValores.append(sNeid);
+					compositorValores.appendSeparator(",");
+					compositorValores.append(iCellid);
+					compositorValores.appendSeparator(",");
+					for(String sParametro : arbolUCELL_NODEB.get(sNeid).get(iCellid).keySet()){
+						compositorValores.append(arbolUCELL_NODEB.get(sNeid).get(iCellid).get(sParametro));
+						compositorValores.appendSeparator(",");
+					}
+						bw.write(compositorValores.toString().substring(0, compositorValores.size()-1)+"\r\n");
+				}
+			}
+		} catch (IOException e) {
+			System.out.println("IO  Exception en escribeArbol_UCELL");
+		}
+	}
+	
+	private static void creaArbolUCELL_UCELL_UNODEB(File fichero_UCELLUNODEB) {
+		int i = 0;
 		try (FileReader fr = new FileReader(fichero_UCELLUNODEB);
 				BufferedReader br = new BufferedReader(fr)) {
 				String sCabeceraFichero = br.readLine();
@@ -103,17 +191,18 @@ public class Adaptacion3G {
 				String sValoresParametros = br.readLine();
 				while (sValoresParametros != null) {
 					String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
-					if(!arbolControllerNameNodebNameNodebID.containsKey(aValoresParametros[mapaCabeceraFicheroUNODEB.get(sNeid)])){
-						arbolControllerNameNodebNameNodebID.put(aValoresParametros[mapaCabeceraFicheroUNODEB.get(sNeid)],
-						new TreeMap<Integer,String>());
+					if(arbolUCELL_NODEB.containsKey(aValoresParametros[mapaCabeceraFicheroUNODEB.get(sNeid)])){
+						for(Integer iCellId : arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFicheroUNODEB.get(sNeid)]).keySet()){
+							if((arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFicheroUNODEB.get(sNeid)]).get(iCellId).containsKey("NODEBNAME"))
+									&&(arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFicheroUNODEB.get(sNeid)]).get(iCellId).get("NODEBNAME")
+											.equalsIgnoreCase(aValoresParametros[mapaCabeceraFicheroUNODEB.get("NODEBNAME")]))){			
+								arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFicheroUNODEB.get(sNeid)])
+								.get(iCellId)
+								.put("NODEBID", aValoresParametros[mapaCabeceraFicheroUNODEB.get("NODEBID")]);
+							}
+						}
 					}
-					if(!arbolControllerNameNodebNameNodebID.get(aValoresParametros[mapaCabeceraFicheroUNODEB.get(sNeid)])
-							.containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroUNODEB.get(sNODEBID)]))){
-						arbolControllerNameNodebNameNodebID.get(aValoresParametros[mapaCabeceraFicheroUNODEB.get(sNeid)])
-						.put(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroUNODEB.get(sNODEBID)]), 
-								aValoresParametros[mapaCabeceraFicheroUNODEB.get(sNODEBNAME)]);
-					}
-					sValoresParametros = br.readLine();
+					sValoresParametros = br.readLine();	
 				}
 			} catch (FileNotFoundException e) {
 				System.out.println("Excepción File Not found en arbol UCELL 1");
@@ -123,42 +212,136 @@ public class Adaptacion3G {
 		
 	}
 	
-	private static void escribeArbol_UCELL_ENODEB(File ficheroArbol_UCELLENODEB) {
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroArbol_UCELLENODEB))) {
+	private static void escribeFicheroUCELL(File ficheroEntrada_UCELL, File ficheroSalida_UCELL,
+			String[] aParametrosCabecera, String[] aParametrosABuscar) {
+		TreeMap<String, String> arbolParametroValor;
+		String sRncId = "---";
+		String sNodeBId = "---";
+
+		try (FileReader fr = new FileReader(ficheroEntrada_UCELL);
+				BufferedReader br = new BufferedReader(fr);
+				BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroSalida_UCELL))) {
+			String sCabeceraFichero = br.readLine();
+			TreeMap<String, Integer> mapaCabeceraFichero = retornaMapaCabecera(sCabeceraFichero);
 			StrBuilder compositorCabecera = new StrBuilder();
-			compositorCabecera.append("\"NEID\"");
-			compositorCabecera.appendSeparator(",");
-			compositorCabecera.append("\"NODEBID\"");
-			compositorCabecera.appendSeparator(",");
-			compositorCabecera.append("\"NODEBNAME\"");
-			bw.write(compositorCabecera.toString()+"\r\n");
-			for (String sNeid : arbolControllerNameNodebNameNodebID.keySet()) {
-				for(Integer iNodeBID : arbolControllerNameNodebNameNodebID.get(sNeid).keySet()){
-					StrBuilder compositorValores = new StrBuilder();
-					compositorValores.append(sNeid);
-					compositorValores.appendSeparator(",");
-					compositorValores.append(iNodeBID);
-					compositorValores.appendSeparator(",");
-					compositorValores.append(arbolControllerNameNodebNameNodebID.get(sNeid).get(iNodeBID));
-					compositorValores.appendSeparator(",");
-					bw.write(compositorValores.toString().substring(0, compositorValores.size()-1)+"\r\n");
-				}
+			for (String sParametro : aParametrosCabecera) {
+				compositorCabecera.append("\""+sParametro+"\"");
+				compositorCabecera.appendSeparator(",");
 			}
+			bw.write(compositorCabecera.toString().substring(0, compositorCabecera.size() - 1) + "\r\n");
+			String sValoresParametros = br.readLine();
+			while (sValoresParametros != null) {
+				arbolParametroValor = new TreeMap<String, String>();
+				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
+				arbolParametroValor.put(sControllerName, aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
+				arbolParametroValor.put(sCellId, aValoresParametros[mapaCabeceraFichero.get(sCellId)]);
+
+				if (arbolUCELLRncId.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNeid)])) {
+					sRncId = arbolUCELLRncId.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
+					arbolParametroValor.put("RNCID", sRncId);
+				}
+				if(arbolUCELL_NODEB.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+						&&(arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sCellId)])))
+						&&(arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sCellId)])).containsKey("NODEBNAME"))
+						&&(arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sCellId)])).containsKey("NODEBID"))
+						&&(arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sCellId)])).get("NODEBNAME")
+								.equalsIgnoreCase(aValoresParametros[mapaCabeceraFichero.get("NODEBNAME")]))){
+					sNodeBId = arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sCellId)])).get("NODEBID");
+					arbolParametroValor.put("NODEBID", sNodeBId);
+				}
+					
+				for (String sParametro : aParametrosABuscar) {
+					if(mapaCabeceraFichero.containsKey(sParametro)){
+						arbolParametroValor.put(sParametro, aValoresParametros[mapaCabeceraFichero.get(sParametro)]);
+					}
+				}
+				escribirFichero(bw, arbolParametroValor, aParametrosCabecera);
+				sValoresParametros = br.readLine();
+			}
+
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found exception en escribe fichero GSM");
 		} catch (IOException e) {
-			System.out.println("IO  Exception escribe arbol ENODEB");
+			System.out.println("IO exception en escribe fichero GSM");
 		}
 		
 	}
+	
+	private static void escribeFicheroUCELL_ADAPTRACH(File ficheroEntrada_UCELL, File ficheroSalida_UCELL,
+			String[] aParametrosCabecera, String[] aParametrosABuscar) {
+		TreeMap<String, String> arbolParametroValor;
+		String sRncId = "---";
+		String sNodeBId = "---";
+		String sNodeBName = "---";
 
-	
-	
-	
-	
-	
-	private static void escribeFicheroU2GNCELL(File ficheroSalida_U2GNCELL, File ficheroSalida_U2GNCELL2,
-			String[] retornaParametrosCabeceraU2GNCELL, String[] retornaParametrosABuscarU2GNCELL) {
-		// TODO Auto-generated method stub
+		try (FileReader fr = new FileReader(ficheroEntrada_UCELL);
+				BufferedReader br = new BufferedReader(fr);
+				BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroSalida_UCELL))) {
+			String sCabeceraFichero = br.readLine();
+			TreeMap<String, Integer> mapaCabeceraFichero = retornaMapaCabecera(sCabeceraFichero);
+			StrBuilder compositorCabecera = new StrBuilder();
+			for (String sParametro : aParametrosCabecera) {
+				compositorCabecera.append("\""+sParametro+"\"");
+				compositorCabecera.appendSeparator(",");
+			}
+			bw.write(compositorCabecera.toString().substring(0, compositorCabecera.size() - 1) + "\r\n");
+			String sValoresParametros = br.readLine();
+			while (sValoresParametros != null) {
+				arbolParametroValor = new TreeMap<String, String>();
+				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
+				arbolParametroValor.put(sControllerName, aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
+				arbolParametroValor.put(sCellId, aValoresParametros[mapaCabeceraFichero.get(sCellId)]);
+
+				if (arbolUCELLRncId.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNeid)])) {
+					sRncId = arbolUCELLRncId.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
+					arbolParametroValor.put("RNCID", sRncId);
+				}
+				if(arbolUCELL_NODEB.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+						&&(arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sCellId)])))
+						&&(arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sCellId)])).containsKey("NODEBNAME"))
+						&&(arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sCellId)])).containsKey("NODEBID"))){
+					
+					sNodeBId = arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sCellId)])).get("NODEBID");
+					arbolParametroValor.put("NODEBID", sNodeBId);
+				}
+					
+				for (String sParametro : aParametrosABuscar) {
+					if(mapaCabeceraFichero.containsKey(sParametro)){
+						arbolParametroValor.put(sParametro, aValoresParametros[mapaCabeceraFichero.get(sParametro)]);
+					}
+				}
+				escribirFichero(bw, arbolParametroValor, aParametrosCabecera);
+				sValoresParametros = br.readLine();
+			}
+
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found exception en escribe fichero GSM");
+		} catch (IOException e) {
+			System.out.println("IO exception en escribe fichero GSM");
+		}
 		
+	}
+	
+	
+
+	private static void escribirFichero(BufferedWriter bw, TreeMap<String, String> arbolParametroValor,
+			String[] arrayCabecera) {
+
+		StrBuilder compositorValores = new StrBuilder();
+		for (String sParametro : arrayCabecera) {
+			if (!arbolParametroValor.containsKey(sParametro)) {
+				compositorValores.append("---");
+				compositorValores.appendSeparator(",");
+			} else {
+				compositorValores.append(arbolParametroValor.get(sParametro));
+				compositorValores.appendSeparator(",");
+			}
+		}
+		try {
+			bw.write(compositorValores.toString().substring(0, compositorValores.size() - 1) + "\r\n");
+		} catch (IOException e) {
+			System.out.println("Error en la escritura del fichero");
+		}
 	}
 	private static String[] retornaParametrosCabeceraRET(){
 		String[] aParametrosCabecera={};
@@ -172,18 +355,20 @@ public class Adaptacion3G {
 		String[] aParametrosCabecera={};
 		return aParametrosCabecera;
 	}
-	private static String[] retornaParametrosCabeceraU2GNCELL(){
-		String[] aParametrosCabecera={"RNC_SOURCE","RNCID","CELLID","GSMCELLINDEX","BLINDHOFLAG","BLINDHOPRIO","NPRIOFLAG","NPRIO","CIOOFFSET","QOFFSET1SN","QRXLEVMIN","TPENALTYHCSRESELECT",
-				"TEMPOFFSET1","DRDECN0THRESHHOLD","SIB11IND","SIB12IND","MBDRFLAG","MBDRPRIO","SRVCCSWITCH","INTERRATADJSQHCS","NIRATOVERLAP","CELLNAME","GSMCELLNAME","CELLNAME-NCELLNAME",
-				"Fecha","Red","ipEntrada","HOPRIO",};
+	private static String[] retornaParametrosCabeceraUCELL(){
+		String[] aParametrosCabecera={"ControllerName","RNCID","NODEBNAME","NODEBID","CELLNAME","CELLID","ACTSTATUS","BANDIND","BLKSTATUS","CCHCNOPINDEX","CELLHETFLAG","CFGRACIND","CIO","CNOPGRPINDEX",
+				"DPGID","DSSFLAG","DSSSMALLCOVMAXTXPOWER","LAC","LOCELL","MAXTXPOWER","NEEDSELFPLANFLAG","NINSYNCIND","NOUTSYNCIND","PSCRAMBCODE","RAC","SAC","SN","SPGID","SRN","SSN","TCELL","TRLFAILURE",
+				"TXDIVERSITYIND","UARFCNDOWNLINK","UARFCNUPLINK","UARFCNUPLINKIND","VPLIMITIND","Fecha", "Red", "ipEntrada","CELLCOVERAGETYPE","DLTPCPATTERN01COUNT","LOGICRNCID","PRIORITY","REMARK",
+				"SPLITCELLIND","TIMER"};
 		return aParametrosCabecera;
 	}
-	private static String[] retornaParametrosCabeceraUCELL(){
+	private static String[] retornaParametrosCabeceraU2GNCELL(){
 		String[] aParametrosCabecera={};
 		return aParametrosCabecera;
 	}
 	private static String[] retornaParametrosCabeceraUCELLADAPTRACH(){
-		String[] aParametrosCabecera={};
+		String[] aParametrosCabecera={"ControllerName","RNCID","NODEBNAME","NODEBID","CELLNAME","CELLID","Fecha","Red","ipEntrada","OPTICONSTANTVALUE","OPTIPOWERRAMPSTEP","OPTIPREAMBLERETRANSMAX",
+				"OPTISTARTLOADSTATE","OPTISTOPHYST","RANDOMACCESSCLEARTHD","RANDOMACCESSCONGESTTHD"};
 		return aParametrosCabecera;
 	}
 	private static String[] retornaParametrosCabeceraUCELLALGOSWITCH(){
@@ -356,11 +541,14 @@ public class Adaptacion3G {
 		return aParametrosCabecera;
 	}
 	private static String[] retornaParametrosABuscarUCELL(){
-		String[] aParametrosCabecera={};
+		String[] aParametrosCabecera={"ACTSTATUS","BANDIND","BLKSTATUS","CCHCNOPINDEX","CELLCOVERAGETYPE","CELLHETFLAG","CELLNAME","CFGRACIND","CIO","CNOPGRPINDEX","DLTPCPATTERN01COUNT",
+				"DPGID","DSSFLAG","DSSSMALLCOVMAXTXPOWER","Fecha","LAC","LOCELL","LOGICRNCID","MAXTXPOWER","NEEDSELFPLANFLAG","NINSYNCIND","NODEBNAME","NOUTSYNCIND","PRIORITY","PSCRAMBCODE",
+				"RAC","REMARK","Red","SAC","SN","SPGID","SPLITCELLIND","SRN","SSN","TCELL","TIMER","TRLFAILURE","TXDIVERSITYIND","UARFCNDOWNLINK","UARFCNUPLINK","UARFCNUPLINKIND","VPLIMITIND","ipEntrada"};
 		return aParametrosCabecera;
 	}
 	private static String[] retornaParametrosABuscarUCELLADAPTRACH(){
-		String[] aParametrosCabecera={};
+		String[] aParametrosCabecera={"NODEBNAME","CELLNAME","Fecha","Red","ipEntrada","OPTICONSTANTVALUE","OPTIPOWERRAMPSTEP","OPTIPREAMBLERETRANSMAX",
+				"OPTISTARTLOADSTATE","OPTISTOPHYST","RANDOMACCESSCLEARTHD","RANDOMACCESSCONGESTTHD"};
 		return aParametrosCabecera;
 	}
 	private static String[] retornaParametrosABuscarUCELLALGOSWITCH(){
