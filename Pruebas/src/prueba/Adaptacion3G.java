@@ -46,8 +46,8 @@ public class Adaptacion3G {
 		creaArbolUCELL_UCELL_UNODEB(ficheroUCELL_ENODEB);
 		
 		// Escribimos el Arbol UCELL-RNCID
-//		File ficheroArbolUCELL_RNCID = new File(carpetaSalida ,"arbolUCELLRNCID.txt");
-//		escribeArbol_UCELL_RNCID(ficheroArbolUCELL_RNCID);
+		File ficheroArbolUCELL_RNCID = new File(carpetaSalida ,"arbolUCELLRNCID.txt");
+		escribeArbol_UCELL_RNCID(ficheroArbolUCELL_RNCID);
 		
 		// Escribimos el Arbol UCELL-NODEBNAME-CELLID
 		System.out.println("Escribimos el Arbol UCELL-NODEBNAME-CELLID");
@@ -233,7 +233,8 @@ public class Adaptacion3G {
 		System.out.println("Creamos el fichero UINTERFREQNCELL");
 		File ficheroUINTERFREQNCELL = new File(carpetaEntrada,"UINTERFREQNCELL.txt");
 		File ficheroSalida_UINTERFREQNCELL = new File(carpetaSalida,"UINTERFREQNCELL.txt");
-		escribeFicheroUCELL_NEID_CELLID_NRNCID_NCELLID(ficheroUINTERFREQNCELL,ficheroSalida_UINTERFREQNCELL,retornaParametrosCabeceraUINTERFREQNCELL(),retornaParametrosABuscarUINTERFREQNCELL());
+		escribeFicheroUCELL_NEID_CELLID_NRNCID_NCELLID(ficheroUINTERFREQNCELL,ficheroSalida_UINTERFREQNCELL,retornaParametrosCabeceraUINTERFREQNCELL(),
+				retornaParametrosABuscarUINTERFREQNCELL());
 		
 		System.out.println("FIN");		
 		
@@ -646,12 +647,12 @@ public class Adaptacion3G {
 			}
 			bw.write(compositorCabecera.toString().substring(0, compositorCabecera.size() - 1) + "\r\n");
 			String sValoresParametros = br.readLine();
+			int i=0;
 			while (sValoresParametros != null) {
 				arbolParametroValor = new TreeMap<String, String>();
 				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
 				arbolParametroValor.put("RNC_SOURCE", aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
-				arbolParametroValor.put(sCellId, aValoresParametros[mapaCabeceraFichero.get(sCellId)]);
-
+				
 				for(String sNRnc : arbolUCELLRncId.keySet()){
 					if(arbolUCELLRncId.get(sNRnc).equalsIgnoreCase(aValoresParametros[mapaCabeceraFichero.get("NCELLRNCID")])){
 						sNneid = sNRnc;
@@ -666,13 +667,15 @@ public class Adaptacion3G {
 					arbolParametroValor.put("NODEBNAME", sNodeBName);
 					arbolParametroValor.put("CELLNAME", sCellName);
 				}
-				if(arbolUCELL_NODEB.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNneid)])
-						&&(arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFichero.get(sNneid)]).containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("NCELLID")])))){
-					sNCellName = arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFichero.get(sNneid)]).get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("NCELLID")])).get("NCELLNAME");
-					arbolParametroValor.put("NCELLNAME", sNCellName);
+				if(arbolUCELL_NODEB.containsKey(sNneid)
+						&&(arbolUCELL_NODEB.get(sNneid).containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("NCELLID")])))){
+					sNCellName = arbolUCELL_NODEB.get(sNneid).get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("NCELLID")])).get("CELLNAME");
+					
 				}
 				
-				sCellName_sNCellName = sCellName +"-"+sNCellName;
+				sCellName_sNCellName = sCellName.replaceAll("\"", "") +"-"+sNCellName.replaceAll("\"", "");
+				arbolParametroValor.put("CELLNAME-NCELLNAME", "\""+sCellName_sNCellName+"\"");
+				arbolParametroValor.put("NCELLNAME", sNCellName);
 				for (String sParametro : aParametrosABuscar) {
 					if(mapaCabeceraFichero.containsKey(sParametro)){
 						arbolParametroValor.put(sParametro, aValoresParametros[mapaCabeceraFichero.get(sParametro)]);
@@ -1276,7 +1279,7 @@ public class Adaptacion3G {
 		return aParametrosCabecera;
 	}
 	private static String[] retornaParametrosABuscarUINTERFREQNCELL(){
-		String[] aParametrosCabecera={"RNCID","BLINDHOFLAG","BLINDHOQUALITYCONDITION","NPRIOFLAG","NPRIO","CIOOFFSET","SIB11IND","IDLEQOFFSET1SN","IDLEQOFFSET2SN","SIB12IND",
+		String[] aParametrosCabecera={"RNCID","CELLID","NCELLRNCID","NCELLID","BLINDHOFLAG","BLINDHOQUALITYCONDITION","NPRIOFLAG","NPRIO","CIOOFFSET","SIB11IND","IDLEQOFFSET1SN","IDLEQOFFSET2SN","SIB12IND",
 				"CONNQOFFSET1SN","CONNQOFFSET2SN","TPENALTYHCSRESELECT","HOCOVPRIO","DRDECN0THRESHHOLD","MBDRFLAG","MBDRPRIO","DRDORLDRFLAG","INTERFREQADJSQHCS","INTERNCELLQUALREQFLAG","QQUALMIN","QRXLEVMIN","CLBFLAG",
 				"CLBPRIO","UARFCNDOWNLINK_CELL","PSCRAMBCODE_CELL","UARFCNDOWNLINK_NCELL","PSCRAMBCODE_NCELL","Fecha", "Red", "ipEntrada",
 				"DRDTARGETULCOVERLIMITTHD","DYNCELLSHUTDOWNFLAG","NCELLCAPCONTAINER","TEMPOFFSET1","TEMPOFFSET2","UINTERNCELLSRC"};
