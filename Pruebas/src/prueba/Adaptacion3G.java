@@ -24,6 +24,9 @@ public class Adaptacion3G {
 	
 	private static TreeMap<String,String> arbolUCELLRncId;
 	private static TreeMap<String,TreeMap<Integer,TreeMap<String,String>>> arbolUCELL_NODEB;
+	private static TreeMap<Integer,String> arbolUCELL_NODEBID_NODEBNAME;
+	private static TreeMap<String,TreeMap<Integer,TreeMap<String,String>>> arbolUCELL_NEID_LTECI_EUTRANCI = new TreeMap<String,TreeMap<Integer,TreeMap<String,String>>>();;
+	
 	public static void main(String[] args) {
 		
 		File carpetaEntrada = new File("C:\\Users\\Moises\\Downloads\\Murdoc\\HuaweiParser\\SALIDA_3G_BD\\");
@@ -44,6 +47,10 @@ public class Adaptacion3G {
 		System.out.println("Añadimos al árbol UCELL, NEID -> CELLIDS -> CELLNAME, NODEBNAME, NODEBID");
 		File ficheroUCELL_ENODEB = new File(carpetaEntrada,"UNODEB.txt");
 		creaArbolUCELL_UCELL_UNODEB(ficheroUCELL_ENODEB);
+		
+		// Escribimos el arbol UNODEBID-UNODEBNAME
+		File fiheroArbol_ENODEBID_ENODEBNAME = new File(carpetaSalida,"arbolENODEBID_ENODEBNAME.txt");
+		escribeArbol_UNODEBID_UNODEBNAME(fiheroArbol_ENODEBID_ENODEBNAME);
 		
 		// Escribimos el Arbol UCELL-RNCID
 		File ficheroArbolUCELL_RNCID = new File(carpetaSalida ,"arbolUCELLRNCID.txt");
@@ -236,10 +243,77 @@ public class Adaptacion3G {
 		escribeFicheroUCELL_NEID_CELLID_NRNCID_NCELLID(ficheroUINTERFREQNCELL,ficheroSalida_UINTERFREQNCELL,retornaParametrosCabeceraUINTERFREQNCELL(),
 				retornaParametrosABuscarUINTERFREQNCELL());
 		
+		// Creamos el fichero UINTERRATHOCOV
+		System.out.println("Creamos el fichero UINTERRATHOCOV");
+		File ficheroUINTERRATHOCOV = new File(carpetaEntrada,"UINTERRATHOCOV.txt");
+		File ficheroSalida_UINTERRATHOCOV = new File(carpetaSalida,"UINTERRATHOCOV.txt");
+		escribeFicheroUCELL_NEID(ficheroUINTERRATHOCOV,ficheroSalida_UINTERRATHOCOV,retornaParametrosCabeceraUINTERRATHOCOV(),retornaParametrosABuscarUINTERRATHOCOV());
+		
+		// Creamos el fichero UINTRAFREQNCELL 
+		System.out.println("Creamos el fichero UINTRAFREQNCELL");
+		File ficheroUINTRAFREQNCELL = new File(carpetaEntrada,"UINTRAFREQNCELL.txt");
+		File ficheroSalida_UINTRAFREQNCELL = new File(carpetaSalida,"UINTRAFREQNCELL.txt");
+		escribeFicheroUCELL_NEID_CELLID_NRNCID_NCELLID(ficheroUINTRAFREQNCELL,ficheroSalida_UINTRAFREQNCELL,retornaParametrosCabeceraUINTRAFREQNCELL(),retornaParametrosABuscarUINTRAFREQNCELL());
+		
+		// Creamos el fichero ULAC
+		System.out.println("Creamos el fichero ULAC");
+		File ficheroULAC = new File(carpetaEntrada,"ULAC.txt");
+		File ficheroSalida_ULAC = new File(carpetaSalida,"ULAC.txt");
+		escribeFicheroUCELL_PorDefecto(ficheroULAC,ficheroSalida_ULAC,retornaParametrosCabeceraULAC(),retornaParametrosABuscarULAC());
+		
+		// Creamos el fichero ULOCELL
+		System.out.println("Creamos el fichero ULOCELL");
+		File ficheroULOCELL = new File(carpetaEntrada,"ULOCELL.txt");
+		File ficheroSalida_ULOCELL = new File(carpetaSalida,"ULOCELL.txt");
+		escribeFicheroUCELL_ULOCELL(ficheroULOCELL,ficheroSalida_ULOCELL,retornaParametrosCabeceraULOCELL(),retornaParametrosABuscarULOCELL());
+		
+		// Creamos el fichero ULTECELL
+		System.out.println("Creamos el fichero ULTECELL");
+		File ficheroULTECELL = new File(carpetaEntrada,"ULTECELL.txt");
+		File ficheroSalida_ULTECELL = new File(carpetaSalida,"ULTECELL.txt");
+		escribeFicheroUCELL_PorDefecto(ficheroULTECELL,ficheroSalida_ULTECELL,retornaParametrosCabeceraULTECELL(),retornaParametrosABuscarULTECELL());
+		
+		// Creamos el fichero ULTENCELL
+		System.out.println("Creamos el fichero ULTENCELL");
+		File ficheroULTENCELL = new File(carpetaEntrada,"ULTENCELL.txt");
+		File ficheroSalida_ULTENCELL = new File(carpetaSalida,"ULTENCELL.txt");
+		escribeFicheroUCELL_ULTENCELL(ficheroULTENCELL,ficheroSalida_ULTENCELL,retornaParametrosCabeceraULTENCELL(),retornaParametrosABuscarULTENCELL());
+		
+		// Creamos el fichero UNODEB 
+		System.out.println("Creamos el fichero UNODEB");
+		File ficheroUNODEB = new File(carpetaEntrada,"UNODEB.txt");
+		File ficheroSalida_UNODEB = new File(carpetaSalida,"UNODEB.txt");
+		escribeFicheroUCELL_PorDefecto(ficheroUNODEB,ficheroSalida_UNODEB,retornaParametrosCabeceraUNODEB(),retornaParametrosABuscarUNODEB());
+		
 		System.out.println("FIN");		
 		
 	}
 	
+
+	
+	private static void escribeArbol_UNODEBID_UNODEBNAME(File ficheroArbol) {
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroArbol))) {
+			StrBuilder compositorCabecera = new StrBuilder();
+			compositorCabecera.append("\"NODEBID\"");
+			compositorCabecera.appendSeparator(",");
+			compositorCabecera.append("\"NODEBNAME\"");
+								
+			bw.write(compositorCabecera.toString()+"\r\n");
+			for (Integer nodebId : arbolUCELL_NODEBID_NODEBNAME.keySet()) {
+					StrBuilder compositorValores = new StrBuilder();
+					compositorValores.append(nodebId);
+					compositorValores.appendSeparator(",");
+					compositorValores.append(arbolUCELL_NODEBID_NODEBNAME.get(nodebId));
+					compositorValores.appendSeparator(",");
+					bw.write(compositorValores.toString().substring(0, compositorValores.size()-1)+"\r\n");
+			}
+		} catch (IOException e) {
+			System.out.println("IO  Exception");
+		}
+		
+		
+	}
+
 
 	private static void creaArbolUCELL_RNCID(File ficheroRNCID) {
 		arbolUCELLRncId = new TreeMap<String,String>();
@@ -360,7 +434,7 @@ public class Adaptacion3G {
 	}
 	
 	private static void creaArbolUCELL_UCELL_UNODEB(File fichero_UCELLUNODEB) {
-		int i = 0;
+		arbolUCELL_NODEBID_NODEBNAME = new  TreeMap<Integer,String>();
 		try (FileReader fr = new FileReader(fichero_UCELLUNODEB);
 				BufferedReader br = new BufferedReader(fr)) {
 				String sCabeceraFichero = br.readLine();
@@ -379,6 +453,10 @@ public class Adaptacion3G {
 							}
 						}
 					}
+					if(!arbolUCELL_NODEBID_NODEBNAME.containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroUNODEB.get("NODEBID")]))){
+						arbolUCELL_NODEBID_NODEBNAME.put(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFicheroUNODEB.get("NODEBID")]),
+								aValoresParametros[mapaCabeceraFicheroUNODEB.get("NODEBNAME")]);
+					}
 					sValoresParametros = br.readLine();	
 				}
 			} catch (FileNotFoundException e) {
@@ -388,6 +466,8 @@ public class Adaptacion3G {
 			}
 		
 	}
+	
+
 	
 	private static void escribeFicheroUCELL(File ficheroEntrada_UCELL, File ficheroSalida_UCELL,
 			String[] aParametrosCabecera, String[] aParametrosABuscar) {
@@ -548,7 +628,6 @@ public class Adaptacion3G {
 	private static void escribeFicheroUCELL_PorDefecto(File ficheroEntrada_UCELL, File ficheroSalida_UCELL,
 			String[] aParametrosCabecera, String[] aParametrosABuscar) {
 		TreeMap<String, String> arbolParametroValor;
-		
 		try (FileReader fr = new FileReader(ficheroEntrada_UCELL);
 				BufferedReader br = new BufferedReader(fr);
 				BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroSalida_UCELL))) {
@@ -564,7 +643,12 @@ public class Adaptacion3G {
 			while (sValoresParametros != null) {
 				arbolParametroValor = new TreeMap<String, String>();
 				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
-				arbolParametroValor.put("RNC_SOURCE", aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
+				if(ficheroEntrada_UCELL.getName().contains("UEXT2GCELL")||(ficheroEntrada_UCELL.getName().contains("ULTECELL"))){
+					arbolParametroValor.put("RNC_SOURCE", aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
+				}
+				if((ficheroEntrada_UCELL.getName().contains("ULAC"))||(ficheroEntrada_UCELL.getName().contains("UNODEB"))){
+					arbolParametroValor.put("ControllerName", aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
+				}
 								
 				for (String sParametro : aParametrosABuscar) {
 					if(mapaCabeceraFichero.containsKey(sParametro)){
@@ -572,6 +656,24 @@ public class Adaptacion3G {
 					}
 				}
 				escribirFichero(bw, arbolParametroValor, aParametrosCabecera);
+				if(ficheroEntrada_UCELL.getName().contains("ULTECELL")){
+					if(!arbolUCELL_NEID_LTECI_EUTRANCI.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNeid)])){
+						arbolUCELL_NEID_LTECI_EUTRANCI.put(aValoresParametros[mapaCabeceraFichero.get(sNeid)], new TreeMap<Integer,TreeMap<String,String>>());
+					}
+					if(!arbolUCELL_NEID_LTECI_EUTRANCI.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("LTECELLINDEX")]))){
+						arbolUCELL_NEID_LTECI_EUTRANCI.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).put(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("LTECELLINDEX")]), new TreeMap<String,String>());
+					}
+					if(!arbolUCELL_NEID_LTECI_EUTRANCI.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("LTECELLINDEX")]))
+							.containsKey("EUTRANCELLID")){
+						arbolUCELL_NEID_LTECI_EUTRANCI.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("LTECELLINDEX")]))
+						.put("EUTRANCELLID", aValoresParametros[mapaCabeceraFichero.get("EUTRANCELLID")]);		
+					}
+					if(!arbolUCELL_NEID_LTECI_EUTRANCI.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("LTECELLINDEX")]))
+							.containsKey("LTECELLNAME")){
+						arbolUCELL_NEID_LTECI_EUTRANCI.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("LTECELLINDEX")]))
+						.put("LTECELLNAME", aValoresParametros[mapaCabeceraFichero.get("LTECELLNAME")]);		
+					}
+				}
 				sValoresParametros = br.readLine();
 			}
 
@@ -647,7 +749,6 @@ public class Adaptacion3G {
 			}
 			bw.write(compositorCabecera.toString().substring(0, compositorCabecera.size() - 1) + "\r\n");
 			String sValoresParametros = br.readLine();
-			int i=0;
 			while (sValoresParametros != null) {
 				arbolParametroValor = new TreeMap<String, String>();
 				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
@@ -693,21 +794,18 @@ public class Adaptacion3G {
 		
 	}
 	
-	private static void escribeFicheroUCELL_ALGOSWITCH(File fichero_UCELLALGOSWITCH, File ficheroSalida_UCELLALGOSWITCH,
-			String[] aParametrosCabeceraUCELLALGOSWITCH, String[] aParametrosABuscarUCELLALGOSWITCH) {
+	private static void escribeFicheroUCELL_ULOCELL(File ficheroEntrada_UCELL, File ficheroSalida_UCELL,
+			String[] aParametrosCabecera, String[] aParametrosABuscar) {
 		TreeMap<String, String> arbolParametroValor;
-		String sRncId = "---";
-		String sNodeBId = "---";
 		String sNodeBName = "---";
-		String sCellName = "---";
-
-		try (FileReader fr = new FileReader(fichero_UCELLALGOSWITCH);
+		String sRncId = "---";
+		try (FileReader fr = new FileReader(ficheroEntrada_UCELL);
 				BufferedReader br = new BufferedReader(fr);
-				BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroSalida_UCELLALGOSWITCH))) {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroSalida_UCELL))) {
 			String sCabeceraFichero = br.readLine();
 			TreeMap<String, Integer> mapaCabeceraFichero = retornaMapaCabecera(sCabeceraFichero);
 			StrBuilder compositorCabecera = new StrBuilder();
-			for (String sParametro : aParametrosCabeceraUCELLALGOSWITCH) {
+			for (String sParametro : aParametrosCabecera) {
 				compositorCabecera.append("\""+sParametro+"\"");
 				compositorCabecera.appendSeparator(",");
 			}
@@ -717,12 +815,58 @@ public class Adaptacion3G {
 				arbolParametroValor = new TreeMap<String, String>();
 				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
 				arbolParametroValor.put(sControllerName, aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
-				arbolParametroValor.put(sCellId, aValoresParametros[mapaCabeceraFichero.get(sCellId)]);
-
+				
 				if (arbolUCELLRncId.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNeid)])) {
 					sRncId = arbolUCELLRncId.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
 					arbolParametroValor.put("RNCID", sRncId);
 				}
+				if (arbolUCELL_NODEBID_NODEBNAME.containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("NODEBID")]))) {
+					sNodeBName = arbolUCELL_NODEBID_NODEBNAME.get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("NODEBID")]));
+					arbolParametroValor.put("NODEBNAME", sNodeBName);
+				}
+				for (String sParametro : aParametrosABuscar) {
+					if(mapaCabeceraFichero.containsKey(sParametro)){
+						arbolParametroValor.put(sParametro, aValoresParametros[mapaCabeceraFichero.get(sParametro)]);
+					}
+				}
+				escribirFichero(bw, arbolParametroValor, aParametrosCabecera);
+				sValoresParametros = br.readLine();
+			}
+
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found exception en escribe fichero GSM");
+		} catch (IOException e) {
+			System.out.println("IO exception en escribe fichero GSM");
+		}
+		
+	}
+	
+	private static void escribeFicheroUCELL_ULTENCELL(File ficheroEntrada_UCELL, File ficheroSalida_UCELL,
+			String[] aParametrosCabecera, String[] aParametrosABuscar) {
+		TreeMap<String, String> arbolParametroValor;
+		String sNodeBId = "---";
+		String sNodeBName = "---";
+		String sCellName = "---";
+		String sEutranCellId = "---";
+		String sLTECellName = "---";
+
+		try (FileReader fr = new FileReader(ficheroEntrada_UCELL);
+				BufferedReader br = new BufferedReader(fr);
+				BufferedWriter bw = new BufferedWriter(new FileWriter(ficheroSalida_UCELL))) {
+			String sCabeceraFichero = br.readLine();
+			TreeMap<String, Integer> mapaCabeceraFichero = retornaMapaCabecera(sCabeceraFichero);
+			StrBuilder compositorCabecera = new StrBuilder();
+			for (String sParametro : aParametrosCabecera) {
+				compositorCabecera.append("\""+sParametro+"\"");
+				compositorCabecera.appendSeparator(",");
+			}
+			bw.write(compositorCabecera.toString().substring(0, compositorCabecera.size() - 1) + "\r\n");
+			String sValoresParametros = br.readLine();
+			while (sValoresParametros != null) {
+				arbolParametroValor = new TreeMap<String, String>();
+				String[] aValoresParametros = UtilidadesTexto.divideTextoEnTokens(sValoresParametros, ",\t");
+				arbolParametroValor.put("RNC_SOURCE", aValoresParametros[mapaCabeceraFichero.get(sNeid)]);
+				
 				if(arbolUCELL_NODEB.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
 						&&(arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sCellId)])))){		
 					sNodeBName = arbolUCELL_NODEB.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get(sCellId)])).get("NODEBNAME");
@@ -732,13 +876,28 @@ public class Adaptacion3G {
 					arbolParametroValor.put("NODEBNAME", sNodeBName);
 					arbolParametroValor.put("CELLNAME", sCellName);
 				}
-					
-				for (String sParametro : aParametrosABuscarUCELLALGOSWITCH) {
+				if(arbolUCELL_NEID_LTECI_EUTRANCI.containsKey(aValoresParametros[mapaCabeceraFichero.get(sNeid)])
+						&&(arbolUCELL_NEID_LTECI_EUTRANCI.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).containsKey(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("LTECELLINDEX")])))){
+					if(arbolUCELL_NEID_LTECI_EUTRANCI.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("LTECELLINDEX")]))
+							.containsKey("LTECELLNAME")){
+						sLTECellName=arbolUCELL_NEID_LTECI_EUTRANCI.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("LTECELLINDEX")]))
+								.get("LTECELLNAME");
+					}
+					if(arbolUCELL_NEID_LTECI_EUTRANCI.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("LTECELLINDEX")]))
+							.containsKey("EUTRANCELLID")){
+						sEutranCellId=arbolUCELL_NEID_LTECI_EUTRANCI.get(aValoresParametros[mapaCabeceraFichero.get(sNeid)]).get(UtilidadesTexto.dameValorEntero(aValoresParametros[mapaCabeceraFichero.get("LTECELLINDEX")]))
+								.get("EUTRANCELLID");
+					}
+				}
+				arbolParametroValor.put("LTECELLNAME", sLTECellName);
+				arbolParametroValor.put("EUTRANCELLID", sEutranCellId);
+				
+				for (String sParametro : aParametrosABuscar) {
 					if(mapaCabeceraFichero.containsKey(sParametro)){
 						arbolParametroValor.put(sParametro, aValoresParametros[mapaCabeceraFichero.get(sParametro)]);
 					}
 				}
-				escribirFichero(bw, arbolParametroValor, aParametrosCabeceraUCELLALGOSWITCH);
+				escribirFichero(bw, arbolParametroValor, aParametrosCabecera);
 				sValoresParametros = br.readLine();
 			}
 
@@ -751,7 +910,6 @@ public class Adaptacion3G {
 	}
 	
 	
-
 	private static void escribirFichero(BufferedWriter bw, TreeMap<String, String> arbolParametroValor,
 			String[] arrayCabecera) {
 
@@ -1010,27 +1168,39 @@ public class Adaptacion3G {
 		return aParametrosCabecera;
 	}
 	private static String[] retornaParametrosCabeceraUINTERRATHOCOV(){
-		String[] aParametrosCabecera={};
+		String[] aParametrosCabecera={"ControllerName","RNCID","BSICVERIFY","CSBSICVERIFYINDICATION","FILTERCOEFOF2D2F","HYSTFOR2D","HYSTFOR2F","HYSTFORINTERRAT","INTERRATCSTHD2DECN0","INTERRATCSTHD2DRSCP",
+				"INTERRATCSTHD2FECN0","INTERRATCSTHD2FRSCP","INTERRATFILTERCOEF","INTERRATHO2DEVENTTYPE","INTERRATHTHD2DECN0","INTERRATHTHD2DRSCP","INTERRATHTHD2FECN0","INTERRATHTHD2FRSCP","INTERRATMEASTIME",
+				"INTERRATPERIODREPORTINTERVAL","INTERRATPHYCHFAILNUM","INTERRATPINGPONGHYST","INTERRATPINGPONGTIMER","INTERRATR99PSTHD2DECN0","INTERRATR99PSTHD2DRSCP","INTERRATR99PSTHD2FECN0",
+				"INTERRATR99PSTHD2FRSCP","INTERRATREPORTMODE","LOGICRNCID","PENALTYTIMEFORPHYCHFAIL","PSBSICVERIFYINDICATION","TARGETRATCSTHD","TARGETRATHTHD","TARGETRATR99PSTHD","TIMETOTRIGFORNONVERIFY",
+				"TIMETOTRIGFORVERIFY","TRIGTIME2D","TRIGTIME2F","USEDIRATHOLOWERTHDECNO","USEDIRATHOUPPERTHDECNO","WEIGHTFORUSEDFREQ","Fecha", "Red", "ipEntrada","INTERRATCOVPENALTYTIME"};
 		return aParametrosCabecera;
 	}
 	private static String[] retornaParametrosCabeceraUINTRAFREQNCELL(){
-		String[] aParametrosCabecera={};
+		String[] aParametrosCabecera={"RNC_SOURCE","RNCID","CELLID","NCELLRNCID","NCELLID","IDLEQOFFSET1SN","IDLEQOFFSET2SN","NPRIOFLAG","CIOOFFSET","CELLSFORBIDDEN1A","CELLSFORBIDDEN1B","SIB11IND",
+				"SIB12IND","TPENALTYHCSRESELECT","MBMSNCELLIND","CONNQOFFSET1SN","CONNQOFFSET2SN","CELLNAME-NCELLNAME","UARFCNDOWNLINK_CELL","PSCRAMBCODE_CELL","UARFCNDOWNLINK_NCELL","PSCRAMBCODE_NCELL",
+				"NODEBNAME","NODEBID","CELLNAME","NCELLNAME","Fecha", "Red", "ipEntrada","DYNCELLSHUTDOWNFLAG","NCELLCAPCONTAINER","NPRIO","TEMPOFFSET1","TEMPOFFSET2","UINTRANCELLSRC"};
 		return aParametrosCabecera;
 	}
 	private static String[] retornaParametrosCabeceraULAC(){
-		String[] aParametrosCabecera={};
+		String[] aParametrosCabecera={"ControllerName","CNOPINDEX","LAC","PLMNVALTAGMAX","PLMNVALTAGMIN","Fecha", "Red", "ipEntrada","LOGICRNCID"};
 		return aParametrosCabecera;
 	}
 	private static String[] retornaParametrosCabeceraULOCELL(){
-		String[] aParametrosCabecera={};
+		String[] aParametrosCabecera={"ControllerName","RNCID","NODEBNAME","NODEBID","LOCELL","LOGICRNCID","Fecha", "Red", "ipEntrada"};
 		return aParametrosCabecera;
 	}
 	private static String[] retornaParametrosCabeceraULTECELL(){
-		String[] aParametrosCabecera={};
+		String[] aParametrosCabecera={"RNC_SOURCE","LTECELLINDEX","LTECELLNAME","MCC","MNC","TAC","CNOPGRPINDEX","CELLPHYID","LTEBAND","LTEARFCN","SUPPPSHOFLAG","EUTRANCELLID","BLACKFLAG","Fecha", "Red",
+				"ipEntrada","LOGICRNCID","SLAVEBANDINDICATOR","U2LRIMCNOPERATORRTINDEX"};
 		return aParametrosCabecera;
 	}
 	private static String[] retornaParametrosCabeceraULTENCELL(){
-		String[] aParametrosCabecera={};
+		String[] aParametrosCabecera={"RNC_SOURCE","RNCID","CELLID","LTECELLINDEX","NODEBNAME","NODEBID","CELLNAME","EUTRANCELLID","LTECELLNAME","BLINDFLAG","ULTENCELLSRC","Fecha", "Red","ipEntrada"};
+		return aParametrosCabecera;
+	}
+	private static String[] retornaParametrosCabeceraUNODEB(){
+		String[] aParametrosCabecera={"ControllerName","NODEBNAME","NODEBID","ACTSTATUS","AUTOHOMINGFLAG","CNOPINDEX","DSSFLAG","HOSTTYPE","IPTRANSAPARTIND","IUBFLEXFLAG","LOGICRNCID","NODEBAUTOREDUNDANCYFLAG",
+				"NODEBPROTCLVER","NODEBTRACESWITCH","RSCMNGMODE","SATELLITEIND","SHARINGTYPE","SIGNALCREATETYPE","SN","SRN","SSN","TNLBEARERTYPE","TRANSDELAY","Fecha","Red","ipEntrada"};
 		return aParametrosCabecera;
 	}
 	private static String[] retornaParametrosCabeceraUNODEBLDR(){
@@ -1051,41 +1221,41 @@ public class Adaptacion3G {
 	}
 	
 	private static String[] retornaParametrosABuscarRET(){
-		String[] aParametrosCabecera={};
-		return aParametrosCabecera;
+		String[] aParametrosABuscar={};
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarRETDEVICEDATA(){
-		String[] aParametrosCabecera={};
-		return aParametrosCabecera;
+		String[] aParametrosABuscar={};
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarRETSUBUNIT(){
-		String[] aParametrosCabecera={};
-		return aParametrosCabecera;
+		String[] aParametrosABuscar={};
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarU2GNCELL(){
-		String[] aParametrosCabecera={};
-		return aParametrosCabecera;
+		String[] aParametrosABuscar={};
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELL(){
-		String[] aParametrosCabecera={"ACTSTATUS","BANDIND","BLKSTATUS","CCHCNOPINDEX","CELLCOVERAGETYPE","CELLHETFLAG","CELLNAME","CFGRACIND","CIO","CNOPGRPINDEX","DLTPCPATTERN01COUNT",
+		String[] aParametrosABuscar={"ACTSTATUS","BANDIND","BLKSTATUS","CCHCNOPINDEX","CELLCOVERAGETYPE","CELLHETFLAG","CELLNAME","CFGRACIND","CIO","CNOPGRPINDEX","DLTPCPATTERN01COUNT",
 				"DPGID","DSSFLAG","DSSSMALLCOVMAXTXPOWER","Fecha","LAC","LOCELL","LOGICRNCID","MAXTXPOWER","NEEDSELFPLANFLAG","NINSYNCIND","NODEBNAME","NOUTSYNCIND","PRIORITY","PSCRAMBCODE",
 				"RAC","REMARK","Red","SAC","SN","SPGID","SPLITCELLIND","SRN","SSN","TCELL","TIMER","TRLFAILURE","TXDIVERSITYIND","UARFCNDOWNLINK","UARFCNUPLINK","UARFCNUPLINKIND","VPLIMITIND","ipEntrada"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLADAPTRACH(){
-		String[] aParametrosCabecera={"NODEBNAME","CELLNAME","Fecha","Red","ipEntrada","OPTICONSTANTVALUE","OPTIPOWERRAMPSTEP","OPTIPREAMBLERETRANSMAX",
+		String[] aParametrosABuscar={"NODEBNAME","CELLNAME","Fecha","Red","ipEntrada","OPTICONSTANTVALUE","OPTIPOWERRAMPSTEP","OPTIPREAMBLERETRANSMAX",
 				"OPTISTARTLOADSTATE","OPTISTOPHYST","RANDOMACCESSCLEARTHD","RANDOMACCESSCONGESTTHD"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLALGOSWITCH(){
-		String[] aParametrosCabecera={"ADAPALGOSWITCH","BERATEREDUCEONFAIRNESSSWITCH","CELLCALLSHOCKSWITCH","CELLCAPACITYAUTOHANDLESWITCH","CELLMOCNDEMARCSWITCH","CELLOMENHSWITCH","CELLSYSINFOENHSWITCH",
+		String[] aParametrosABuscar={"ADAPALGOSWITCH","BERATEREDUCEONFAIRNESSSWITCH","CELLCALLSHOCKSWITCH","CELLCAPACITYAUTOHANDLESWITCH","CELLMOCNDEMARCSWITCH","CELLOMENHSWITCH","CELLSYSINFOENHSWITCH",
 				"CSRABCACOPTSWITCH","DCHENHSWITCH","DEMARCPREEMPTSWITCH","DLCMAVOIDCHGSCCODESWITCH","DLPWRLDCUESELSWITCH","DLSFADMALGOSWITCH","Fecha","HSPAENHSWITCH","HSPAPLUSSWITCH","LOGICRNCID","NBMCACALGOSWITCH",
 				"NBMCACALGOSWITCH2","NBMDLCACALGOSELSWITCH","NBMLDCALGOSWITCH","NBMLDCIRATUESELSWITCH","NBMLDCUESELSWITCH","NBMMACHSRESETALGOSELSWITCH","NBMSEREXPCACALGOSWITCH","NBMSFLDCUESELSWITCH",
 				"NBMULCACALGOSELSWITCH","OFFLOADSWITCH","RRCCACCHOICE","RRCCECODECACCHOICE"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLCAC(){
-		String[] aParametrosCabecera={"BACKGROUNDNOISE","BGNABNORMALTHD","BGNADJUSTTIMELEN","BGNENDTIME","BGNEQUSERNUMTHD",
+		String[] aParametrosABuscar={"BACKGROUNDNOISE","BGNABNORMALTHD","BGNADJUSTTIMELEN","BGNENDTIME","BGNEQUSERNUMTHD",
 				"BGNOPTSWITCH","BGNPERSISTSWITCH","BGNSTARTTIME","BGNSWITCH","BGNUPDATETHD","CELLENVTYPE","CELLULEQUNUMCAPACITY","DEFPCPICHECNO","DLCCHLOADRSRVCOEFF","DLCELLTOTALTHD","DLCONVAMRTHD",
 				"DLCONVNONAMRTHD","DLHOCECODERESVSF","DLHOTHD","DLHSUPARSVDFACTOR","DLMBMSRSVDFACTOR","DLNRTRRCCACCECODERESVSF","DLOTHERRRCCACCECODERESVSF","DLOTHERTHD","DLRRCCECODERESVSF",
 				"DLTOTALEQUSERNUM","HSDPABEPBRTHD","HSDPAMAXGBPTHD","HSDPASTRMPBRTHD","HSUPAEQUALPRIORITYUSERPBRTHD","HSUPAHIGHPRIORITYUSERPBRTHD","HSUPALOWPRIORITYUSERPBRTHD","HSUPAMAXGBPTHD",
@@ -1096,110 +1266,110 @@ public class Adaptacion3G {
 				"DEFAULTECNO","DLINTERFACTOR","DLOTHERTHDFORPT","FREEUSERGBPRSVD","HHOPROCPCPREAMBLE","HHOPROCSRBDELAY","HSUPAMAXGBPTHD","HSUPANONSERVINTERFEREFACTOR","IFFASTMULRLDLCECODERESVSF",
 				"IFFASTMULRLDLTHD","IFFASTMULRLINITPWRPO","IFFASTMULRLULCERESVSF","LOGICRNCID","MAXERACHUSERNUM","MAXHSDPAUSERNUM","MAXUPAUSERNUMDYNADJFACTOR","OFFSETECNO","PREAMBLEACKTHD",
 				"PTTPCPREAMBLE","PTTSRBDELAY","RRCPROCPCPREAMBLE","RRCPROCSRBDELAY","SHOINITPWRPO"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLCOALGOENHPARA(){
-		String[] aParametrosCabecera={"CSPSSERVICEHOSWITCH","RABCOMBDRDSWITCHVALID","Fecha", "Red", "ipEntrada","ACCESSLIMITPROPADELAYTHD",
+		String[] aParametrosABuscar={"CSPSSERVICEHOSWITCH","RABCOMBDRDSWITCHVALID","Fecha", "Red", "ipEntrada","ACCESSLIMITPROPADELAYTHD",
 				"CELLCOALGOENHSWITCH","CSPSRECFGSWBASERFVALID","DLSERVICETHROUTHD","DLSERVICETHROUTHD1","DLSERVICETHROUTHD2","FAKERSCP","INTERFREQHOTHLDECN0ICRPH3","INTERFREQMEASTIMEFORICRPH3",
 				"INTERRATHOTHLDICRPH3","INTERRATMEASTIMEFORICRPH3","LOGICRNCID","RSVSWITCH0","RSVSWITCH1","RSVSWITCH2","RSVSWITCH3","RSVSWITCH4","RSVSWITCH5","RSVU32PARA0","RSVU32PARA1","RSVU32PARA10",
 				"RSVU32PARA11","RSVU32PARA2","RSVU32PARA3","RSVU32PARA4","RSVU32PARA5","RSVU32PARA6","RSVU32PARA7","RSVU32PARA8","RSVU32PARA9","RSVU8PARA0","RSVU8PARA1","RSVU8PARA10","RSVU8PARA11","RSVU8PARA12",
 				"RSVU8PARA2","RSVU8PARA3","RSVU8PARA4","RSVU8PARA5","RSVU8PARA6","RSVU8PARA7","RSVU8PARA8","RSVU8PARA9"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLCONNREDIR(){
-		String[] aParametrosCabecera={"FACHNUMABSTHD","FACHNUMRELTHD","NRTREDIRFACTOROFLDR","NRTREDIRFACTOROFNORM","REDIRBANDIND","REDIRSWITCH","Fecha", "Red", "ipEntrada","LOGICRNCID"};
-		return aParametrosCabecera;
+		String[] aParametrosABuscar={"FACHNUMABSTHD","FACHNUMRELTHD","NRTREDIRFACTOROFLDR","NRTREDIRFACTOROFNORM","REDIRBANDIND","REDIRSWITCH","Fecha", "Red", "ipEntrada","LOGICRNCID"};
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLDRD(){
-		String[] aParametrosCabecera={"BASEDONMEASHRETRYDRDSWITCH","BASEDUELOCDRDREMAINTHD","BASEDUELOCDRDSWITCH",
+		String[] aParametrosABuscar={"BASEDONMEASHRETRYDRDSWITCH","BASEDUELOCDRDREMAINTHD","BASEDUELOCDRDSWITCH",
 				"CODEBALANCINGDRDCODERATETHD","CODEBALANCINGDRDMINSFTHD","CODEBALANCINGDRDSWITCH","CONNECTFAILRRCREDIRSWITCH","D2EDRDSWITCH","DPGDRDSWITCH","DRMAXGSMNUM","GRIDBASEDDRDSRTHD",
 				"HRETRYTARGCELLLOADSTUSIND","HSPAPLUSSATISSWITCH","LDBDRDCHOICE","LDBDRDLOADREMAINTHDDCH","LDBDRDLOADREMAINTHDHSDPA","LDBDRDSWITCHDCH","LDBDRDSWITCHHSDPA","LOGICRNCID",
 				"MBDRDBASEDGRIDSWITCH","PATHLOSSTHDFORCENTER","PATHLOSSTHDFOREDGE","REDIRBANDIND","RRCCELLLOADSORTSWITCH","SECCELLLDBDRDCHOICE","SECCELLREFBHFLAGSWITCH","SERVICEDIFFDRDSWITCH",
 				"TRAFFTYPEFORBASEDUELOC","UELOCBASEDDRDFORC2DSWITCH","ULLDBDRDLOADREMAINTHDDCHSDPA","ULLDBDRDSWITCHDCHSDPA","Fecha", "Red", "ipEntrada"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLDYNSHUTDOWN(){
-		String[] aParametrosCabecera={"CELLSTARTUPTYPE","DYNSHUTDOWNCCHUSERSWITCH","DYNSHUTDOWNSWITCH","DYNSHUTDOWNTYPE",
+		String[] aParametrosABuscar={"CELLSTARTUPTYPE","DYNSHUTDOWNCCHUSERSWITCH","DYNSHUTDOWNSWITCH","DYNSHUTDOWNTYPE",
 				"ENDTIME1","HSDPAUSERNUMTHD","HSUPAUSERNUMTHD","MCHSDPAUSERNUMTHD","NCELLLDRREMAINTHD","STARTTIME1","TOTALUSERNUMTHD","USERMIGRATIONTYPE","Fecha", "Red", "ipEntrada",
 				"BLINDHOLIMITSWITCH","PCPICHPOWERADJPERIOD","PCPICHPOWERADJSTEP","USERACCESSCTRLBFSHUTSWITCH"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLFRC(){
-		String[] aParametrosCabecera={"ALLOWEDSAVECODERESOURCE","DCHUSERLOADSTAFORPTPRIOR","DLBETRAFFDECTHS","DLBETRAFFINITBITRATE",
+		String[] aParametrosABuscar={"ALLOWEDSAVECODERESOURCE","DCHUSERLOADSTAFORPTPRIOR","DLBETRAFFDECTHS","DLBETRAFFINITBITRATE",
 				"DLPWRLOADSTAFORPTPRIOR","ECN0EFFECTTIME","ECN0THS","ECN0THSFOR2MSTO10MS","H2DACCBASCOVSWITCH","LOADSTATEFORPILOTPWRADJ","LOGICRNCID","PSRECFGECNOTHDFORCSPS","PSRECFGRSCPTHDFORCSPS",
 				"RRCCAUSESIGCHTYPEIND","RRCSIGCHTYPEOPTNONHLDSTATE","ULACTULLOADSTAFORPTPRIOR","ULBETRAFFDECTHS","ULBETRAFFINITBITRATE","Fecha", "Red", "ipEntrada","ECN0THDFORBASECOVERE2D",
 				"ECN0THDFORBASECOVERE2DCSPS","ECN0THDFORSRBE2D","ECN0THSFOR2MSTO10MSCSPS","FAKEECNO","FAKEECNOH2D","WEAKCOVRRCREDIRECNOTHS"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLHOCOMM(){
-		String[] aParametrosCabecera={"COEXISTMEASTHDCHOICE","CSSERVICEHOSWITCH","FASTRETURNTOLTESWITCH","HSPATIMERLEN",
+		String[] aParametrosABuscar={"COEXISTMEASTHDCHOICE","CSSERVICEHOSWITCH","FASTRETURNTOLTESWITCH","HSPATIMERLEN",
 				"INTERFREQRATSWITCH","MACROMICRO1APREMEASSWITCH","PSSERVICEHOSWITCH","SPECUSERCSTHD2DECN0","SPECUSERCSTHD2DRSCP","SPECUSERCSTHD2FECN0","SPECUSERCSTHD2FRSCP","SPECUSERHYSTFOR2D",
 				"U2LBLINDREDIRSWITCH","U2LLTELOADSWITCH","Fecha", "Red", "ipEntrada","CSHOPRIOMEASTIMERLEN","CSIFFASTMULRLSETUPSWITCH","LOGICRNCID","PENALTYTIMERFORCMFAILCOV","PSHOPRIOMEASTIMERLEN",
 				"PSIFFASTMULRLSETUPSWITCH","RELOCPREFAILPENALTYTIMER"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLHSDPA(){
-		String[] aParametrosCabecera={"ACTSTATUS","ALLOCCODEMODE","CODEADJFORHSDPASWITCH","CODEADJFORHSDPAUSERNUMTHD",
+		String[] aParametrosABuscar={"ACTSTATUS","ALLOCCODEMODE","CODEADJFORHSDPASWITCH","CODEADJFORHSDPAUSERNUMTHD",
 				"DYNHSSCCHALLOCSWITCH","HCODEADJPUNSHTIMERLENGTH","HSDPCCHPREAMBLESWITCH","HSPAPOWER","HSPDSCHCODENUM","HSPDSCHMAXCODENUM","HSPDSCHMINCODENUM","HSPDSCHMPOCONSTENUM","HSSCCHCODENUM",
 				"MIMOMPOCONSTANT","Fecha", "Red", "ipEntrada","LOGICRNCID"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLHSDPCCH(){
-		String[] aParametrosCabecera={"CQIFBCK","CQIFBCKBASECELLLOAD","CQIFBCKBASECOVERAGE","CQIFBCKBASECSCOMBSERV","CQIFBCKFORCONVER",
+		String[] aParametrosABuscar={"CQIFBCK","CQIFBCKBASECELLLOAD","CQIFBCKBASECOVERAGE","CQIFBCKBASECSCOMBSERV","CQIFBCKFORCONVER",
 				"CQIFBCKFORDCMIMO","CQIFBCKFORMIMO","CQIFBCKFORSHO","CQIPO","CQIPOFORSHO","CQIREF","CQIREFFORSHO","Fecha", "Red", "ipEntrada","ACKNACKPOFORMF","ACKPO1","ACKPO1FORSHO","ACKPO2",
 				"ACKPO2FORSHO","ACKPO3","ACKPO3FORSHO","CQIPOFORMF","LOGICRNCID","NACKPO1","NACKPO1FORSHO","NACKPO2","NACKPO2FORSHO","NACKPO3","NACKPO3FORSHO"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLHSUPA(){
-		String[] aParametrosCabecera={"ACTSTATUS","DYNTGTROTCTRLSWITCH","EAGCHCODENUM","ERGCHEHICHCODENUM","MAXTARGETULLOADFACTOR",
+		String[] aParametrosABuscar={"ACTSTATUS","DYNTGTROTCTRLSWITCH","EAGCHCODENUM","ERGCHEHICHCODENUM","MAXTARGETULLOADFACTOR",
 				"NONSERVTOTOTALEDCHPWRRATIO","Fecha", "Red", "ipEntrada","LOGICRNCID","TGTROTADJPERIOD","TGTROTDOWNADJSTEP","TGTROTUPADJSTEP","UPLIMITFORMAXULTGTLDFACTOR"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLINTERFREQHOCOV(){
-		String[] aParametrosCabecera={"HYSTFOR2D","HYSTFOR2F","HYSTFORPRDINTERFREQ","INTERFREQCSTHD2DECN0","INTERFREQCSTHD2DRSCP",
+		String[] aParametrosABuscar={"HYSTFOR2D","HYSTFOR2F","HYSTFORPRDINTERFREQ","INTERFREQCSTHD2DECN0","INTERFREQCSTHD2DRSCP",
 				"INTERFREQCSTHD2FECN0","INTERFREQCSTHD2FRSCP","INTERFREQFILTERCOEF","INTERFREQHO2DEVENTTYPE","INTERFREQHTHD2DECN0","INTERFREQHTHD2DRSCP","INTERFREQHTHD2FECN0","INTERFREQHTHD2FRSCP",
 				"INTERFREQINULCOVLIMITTHLD","INTERFREQMCMODE","INTERFREQMEASTIME","INTERFREQR99PSTHD2DECN0","INTERFREQR99PSTHD2DRSCP","INTERFREQR99PSTHD2FECN0","INTERFREQR99PSTHD2FRSCP",
 				"INTERFREQREPORTMODE","LOGICRNCID","PRDREPORTINTERVAL","TARGETFREQCSTHDECN0","TARGETFREQCSTHDRSCP","TARGETFREQHTHDECN0","TARGETFREQHTHDRSCP","TARGETFREQR99PSTHDECN0",
 				"TARGETFREQR99PSTHDRSCP","TIMETOINTERFREQHO","TIMETOTRIG2D","TIMETOTRIG2F","TIMETOTRIGFORPRDINTERFREQ","USEDFREQCSTHDECN0","USEDFREQCSTHDRSCP","USEDFREQHTHDECN0","USEDFREQHTHDRSCP",
 				"USEDFREQR99PSTHDECN0","USEDFREQR99PSTHDRSCP","WEIGHTFORUSEDFREQ","Fecha", "Red", "ipEntrada","HHOECNOMIN","HHORSCPMIN","IFHOFAILNUM","IFHOPINGPONGTIMER","INTERFREQHOCONSIDERRTWPSW",
 				"PENALTYTIMERFORIFHOFAIL","TARGETFREQULCOVERLIMITTHD","UEPENALTYTIMERFORIFHOFAIL"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLINTERRATHOCOV(){
-		String[] aParametrosCabecera={"BSICVERIFY","CSBSICVERIFYINDICATION","FILTERCOEFOF2D2F","HYSTFOR2D","HYSTFOR2F","HYSTFORINTERRAT",
+		String[] aParametrosABuscar={"BSICVERIFY","CSBSICVERIFYINDICATION","FILTERCOEFOF2D2F","HYSTFOR2D","HYSTFOR2F","HYSTFORINTERRAT",
 				"INTERRATCSTHD2DECN0","INTERRATCSTHD2DRSCP","INTERRATCSTHD2FECN0","INTERRATCSTHD2FRSCP","INTERRATFILTERCOEF","INTERRATHTHD2DECN0","INTERRATHTHD2DRSCP","INTERRATHTHD2FECN0","INTERRATHTHD2FRSCP",
 				"INTERRATMEASTIME","INTERRATPERIODREPORTINTERVAL","INTERRATPHYCHFAILNUM","INTERRATPINGPONGHYST","INTERRATPINGPONGTIMER","INTERRATR99PSTHD2DECN0","INTERRATR99PSTHD2DRSCP","INTERRATR99PSTHD2FECN0",
 				"INTERRATR99PSTHD2FRSCP","INTERRATREPORTMODE","PENALTYTIMEFORPHYCHFAIL","PSBSICVERIFYINDICATION","TARGETRATCSTHD","TARGETRATHTHD","TARGETRATR99PSTHD","TIMETOTRIGFORNONVERIFY","TIMETOTRIGFORVERIFY",
 				"TRIGTIME2D","TRIGTIME2F","WEIGHTFORUSEDFREQ","Fecha", "Red", "ipEntrada","INTERRATCOVPENALTYTIME","INTERRATHO2DEVENTTYPE","LOGICRNCID","USEDIRATHOLOWERTHDECNO","USEDIRATHOUPPERTHDECNO"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLINTERRATHONCOV(){
-		String[] aParametrosCabecera={"AMNTOFRPT3C","BSICVERIFY","CSHOOUT2GLOADTHD","HYSTFOR3C","INTERRATFILTERCOEF","INTERRATHOATTEMPTS",
+		String[] aParametrosABuscar={"AMNTOFRPT3C","BSICVERIFY","CSHOOUT2GLOADTHD","HYSTFOR3C","INTERRATFILTERCOEF","INTERRATHOATTEMPTS",
 				"INTERRATMEASTIME","INTERRATNCOVHOCSTHD","INTERRATNCOVHOPSTHD","INTERRATPHYCHFAILNUM","LOGICRNCID","PENALTYTIMEFORPHYCHFAIL","PERIODFOR3C","PSHOOUT2GLOADTHD","TRIGTIME3C","Fecha", "Red", "ipEntrada"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLINTRAFREQHO(){
-		String[] aParametrosCabecera={"BLINDHORSCP1FTHRESHOLD","HYST1AOR1CTRIGSCC","HYST1DJUDGETRIGSCC","HYSTFOR1A","HYSTFOR1B","HYSTFOR1C","HYSTFOR1D",
+		String[] aParametrosABuscar={"BLINDHORSCP1FTHRESHOLD","HYST1AOR1CTRIGSCC","HYST1DJUDGETRIGSCC","HYSTFOR1A","HYSTFOR1B","HYSTFOR1C","HYSTFOR1D",
 				"HYSTFOR1DRSCP","HYSTFOR1F","HYSTFOR1J","INTRAABLTHDFOR1FECNO","INTRAFREQFILTERCOEF","INTRAFREQMEASQUANTITY","INTRARELTHDFOR1ACSNVP","INTRARELTHDFOR1ACSVP","INTRARELTHDFOR1APS","INTRARELTHDFOR1BCSNVP",
 				"INTRARELTHDFOR1BCSVP","INTRARELTHDFOR1BPS","INTRARELTHLDFOR1APRE","MAXCELLINACTIVESET","PERIODMRREPORTNUMFOR1A","PERIODMRREPORTNUMFOR1APRE","PERIODMRREPORTNUMFOR1C","PERIODMRREPORTNUMFOR1J",
 				"REPORTINTERVALFOR1A","REPORTINTERVALFOR1APRE","REPORTINTERVALFOR1C","REPORTINTERVALFOR1J","SECHYSTFOR1A","SECHYSTFOR1B","SECHYSTFOR1C","SECHYSTFOR1F","SECINTRAABLTHDFOR1FECNO","SECINTRAABLTHDFOR1FRSCP",
 				"SECINTRARELTHDFOR1APS","SECINTRARELTHDFOR1BPS","SECPERIODMRREPORTNUMFOR1A","SECPERIODMRREPORTNUMFOR1C","SECREPORTINTERVALFOR1A","SECREPORTINTERVALFOR1C","SECTRIGTIME1A","SECTRIGTIME1B","SECTRIGTIME1C",
 				"SECTRIGTIME1F","SHOBCELLECNOTHLDFORPSADD","SHOBCELLECNOTHLDFORPSREJ","SHOECNOOFFSETFORPSREJ","SHOQUALMIN","TRIGTIME1A","TRIGTIME1B","TRIGTIME1C","TRIGTIME1D","TRIGTIME1DFORSRBOVERHSDPA","TRIGTIME1DRSCP",
 				"TRIGTIME1F","TRIGTIME1J","WEIGHT","Fecha", "Red", "ipEntrada","LOGICRNCID"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLLDM(){
-		String[] aParametrosCabecera={"DLLDRTRIGTHD","DLLDRRELTHD","ULLDRTRIGTHD","ULLDRRELTHD","Fecha", "Red", "ipEntrada","ACTUALLOADSTATRANSHYSTIME",
+		String[] aParametrosABuscar={"DLLDRTRIGTHD","DLLDRRELTHD","ULLDRTRIGTHD","ULLDRRELTHD","Fecha", "Red", "ipEntrada","ACTUALLOADSTATRANSHYSTIME",
 				"CAPAOPTTCPLOADTHLD","DCHUENUMHEAVYTHD","DCHUENUMLOADEDTHD","DCHUENUMNORMALTHD","DCHUENUMOVERLOADTHD","DCHUSERLOADSTAFORULUNIOLC","DCHUSERNUMCONGTHD","DCHUSERNUMNORMALTHD","DCHUSERNUMSTATRANSHYSTIME",
 				"DLCONGSTATETRANSHYSTIME","DLHEAVYTHD","DLLDTRNSHYSTIME","DLLOADEDTHD","DLNONHLOADCONGSTATETHD","DLNONHLOADNORMALSTATETHD","DLNORMALTHD","DLOLCRELTHD","DLOLCTRIGTHD","DLOVERLOADTHD","DLPWRCSCLBRELTHD",
 				"DLPWRCSCLBTRIGTHD","DLPWRLOADSTAFORULUNIOLC","DLPWRPSCLBRELTHD","DLPWRPSCLBTRIGTHD","DLSFDIV2CMVALIDCODETHD","DYNMULTILINKTCPLOADTHLD","FAIRNESSTHD","HSUPAURETRNSLDRELTHD","HSUPAURETRNSLDTRIGTHD",
 				"LOGICRNCID","MAXFACHPOWERADJLOADSTATHD","OFFLOADRELATIVETHD","PCPICHPWRDOWNDLLOADSTATE","PCPICHPWRUPDLLOADSTATE","RACHCONGRELTHD","RACHCONGTRIGTHD","RELRATIOFORULRTWP","RTWPLOADSTATETRANSHYSTIME",
 				"SPECUSERPWRENDLPWRTRIGTHD","TRIGRATIOFORULRTWP","ULACTUALLOADHEAVYTHD","ULACTUALLOADLOADEDTHD","ULACTUALLOADNORMALTHD","ULACTUALLOADOVERLOADTHD","ULACTUALLOADTHDFOREXTLRATE","ULACTUALLOADTRIGLDRTHD",
 				"ULACTULLOADSTAFORULUNIOLC","ULLDTRNSHYSTIME","ULOLCRELTHD","ULOLCTRIGTHD","ULPWRCSCLBRELTHD","ULPWRCSCLBTRIGTHD","ULPWRPSCLBRELTHD","ULPWRPSCLBTRIGTHD","ULRTWPCONGTHD","ULRTWPNORMALTHD"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLLDR(){
-		String[] aParametrosCabecera={"DLLDRBERATEREDUCTIONRABNUM","DLLDRCREDITSFRESTHD","DLLDRFIRSTACTION","DLLDRFOURTHACTION","DLLDRSECONDACTION",
+		String[] aParametrosABuscar={"DLLDRBERATEREDUCTIONRABNUM","DLLDRCREDITSFRESTHD","DLLDRFIRSTACTION","DLLDRFOURTHACTION","DLLDRSECONDACTION",
 				"DLLDRTHIRDACTION","MAXUSERNUMCODEADJ","ULLDRBERATEREDUCTIONRABNUM","ULLDRCREDITSFRESTHD","ULLDRFIRSTACTION","ULLDRFOURTHACTION","ULLDRSECONDACTION","ULLDRTHIRDACTION","ULTTICREDITSFRESTHD",
 				"Fecha", "Red", "ipEntrada","CCCHCONGCTRLSWITCH","CELLLDRSFRESTHD","CODECONGHOENHANCEIND","CODECONGSELINTERFREQHOIND","DLCSINTERRATSHOULDBEHOUENUM","DLCSINTERRATSHOULDNOTHOUENUM",
 				"DLINTERFREQHOBWTHD","DLINTERFREQHOCELLLOADSPACETHD","DLLDRAMRRATEREDUCTIONRABNUM","DLLDREIGHTHACTION","DLLDRELEVENTHACTION","DLLDRFIFTHACTION","DLLDRSEVENTHACTION","DLLDRSIXTHACTION","DLLDRTENTHACTION",
@@ -1207,123 +1377,135 @@ public class Adaptacion3G {
 				"INTERFREQLDHOMETHODSELECTION","LDRCODEPRIUSEIND","LDRCODEUSEDSPACETHD","LOGICRNCID","MBMSDECPOWERRABTHD","ULCSINTERRATSHOULDBEHOUENUM","ULCSINTERRATSHOULDNOTHOUENUM","ULINTERFREQHOBWTHD",
 				"ULINTERFREQHOCELLLOADSPACETHD","ULLDRAMRRATEREDUCTIONRABNUM","ULLDREIGHTHACTION","ULLDRFIFTHACTION","ULLDRNINTHACTION","ULLDRPSRTQOSRENEGRABNUM","ULLDRSEVENTHACTION","ULLDRSIXTHACTION",
 				"ULPSINTERRATSHOULDBEHOUENUM","ULPSINTERRATSHOULDNOTHOUENUM","ULPSU2LHOUENUM"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLLICENSE(){
-		String[] aParametrosCabecera={"FUNCSWITCH1","FUNCSWITCH2","LOGICRNCID","Fecha", "Red", "ipEntrada"};
-		return aParametrosCabecera;
+		String[] aParametrosABuscar={"FUNCSWITCH1","FUNCSWITCH2","LOGICRNCID","Fecha", "Red", "ipEntrada"};
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLNFREQPRIOINFO(){
-		String[] aParametrosCabecera={"BLACKLSTCELLNUMBER","EARFCN","EDETECTIND","EMEASBW","EQRXLEVMIN","NPRIORITY","RSRQSWITCH","SUPCNOPGRPINDEX",
+		String[] aParametrosABuscar={"BLACKLSTCELLNUMBER","EARFCN","EDETECTIND","EMEASBW","EQRXLEVMIN","NPRIORITY","RSRQSWITCH","SUPCNOPGRPINDEX",
 				"THDTOHIGH","THDTOLOW","Fecha", "Red", "ipEntrada","BCELLID1","CNOPGRPINDEX","EQQUALMINOFFSET","EQQUALMINSTEP","EQRXLEVMINOFFSET","EQRXLEVMINSTEP","FREQUSEPOLICYIND","LOGICRNCID","NPRIORITYCONNECT",
 				"SLAVEBANDINDICATOR"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLRLPWR(){
-		String[] aParametrosCabecera={"CNDOMAINID","DLSF","LOGICRNCID","MAXBITRATE","RLMAXDLPWR","RLMINDLPWR","SPECUSERRLMAXDLPWR","Fecha", "Red", "ipEntrada"};
-		return aParametrosCabecera;
+		String[] aParametrosABuscar={"CNDOMAINID","DLSF","LOGICRNCID","MAXBITRATE","RLMAXDLPWR","RLMINDLPWR","SPECUSERRLMAXDLPWR","Fecha", "Red", "ipEntrada"};
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLSELRESEL(){
-		String[] aParametrosCabecera={"CELLFACHMEASLAYER","CELLFACHPRIORESELSWITCH","CONNQHYST1S","CONNQHYST2S","CONNSINTERSEARCH",
+		String[] aParametrosABuscar={"CELLFACHMEASLAYER","CELLFACHPRIORESELSWITCH","CONNQHYST1S","CONNQHYST2S","CONNSINTERSEARCH",
 				"CONNSINTRASEARCH","IDLEQHYST1S","IDLEQHYST2S","IDLESINTERSEARCH","IDLESINTRASEARCH","INTERFREQTRESELSCALINGFACTOR","INTERRATTRESELSCALINGFACTOR","MAXALLOWEDULTXPOWER","NONHCSIND",
 				"PRIORESELECTSWITCH","QHYST1SFACH","QHYST1SPCH","QHYST2SFACH","QHYST2SPCH","QQUALMIN","QRXLEVMIN","QRXLEVMINEXTSUP","QUALMEAS","SPEEDDEPENDENTSCALINGFACTOR","SPRIORITY","SSEARCHRAT",
 				"THDPRIORITYSEARCH1","THDPRIORITYSEARCH2","THDSERVINGLOW","THDSERVINGLOW2","TRESELECTIONS","TRESELECTIONSFACH","TRESELECTIONSPCH","Fecha", "Red", "ipEntrada","HYSTFOR1AFORSIB",
 				"HYSTFOR1DFORSIB","INTRARELTHD1AFORSIB","LOGICRNCID","TRIGTIME1AFORSIB","TRIGTIME1DFORSIB"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUCELLURA(){
-		String[] aParametrosCabecera={"URAID","Fecha", "Red", "ipEntrada","LOGICRNCID"};
-		return aParametrosCabecera;
+		String[] aParametrosABuscar={"URAID","Fecha", "Red", "ipEntrada","LOGICRNCID"};
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUDRD(){
-		String[] aParametrosCabecera={"ControllerName","RNCID","BASEDONMEASHRETRYDRDSWITCH","BASEDUELOCDRDREMAINTHD","BASEDUELOCDRDSWITCH","CODEBALANCINGDRDCODERATETHD","CODEBALANCINGDRDMINSFTHD",
+		String[] aParametrosABuscar={"ControllerName","RNCID","BASEDONMEASHRETRYDRDSWITCH","BASEDUELOCDRDREMAINTHD","BASEDUELOCDRDSWITCH","CODEBALANCINGDRDCODERATETHD","CODEBALANCINGDRDMINSFTHD",
 				"CODEBALANCINGDRDSWITCH","COMACROMICROIFREDIRSWITCH","CONNECTFAILRRCREDIRSWITCH","DCHADVDRDSWITCH","DELTACODEOCCUPIEDRATE","DLSFTHDFORRRCDRDPRECAC","DPGDRDSWITCH","DRMAXGSMNUM",
 				"GRIDBASEDDRDSRTHD","HRETRYTARGCELLLOADSTUSIND","HRTSERVICEDIFFDRDSWITCH","HSDPAADVDRDSWITCH","HSDPALOADDRDOPTSWITCH","HSPAPLUSDRDLOADOFFSETMC","HSPAPLUSLOADDIFFSWITCH",
 				"HSPAPLUSSATISSWITCH","LDBDRDCHOICE","LDBDRDLOADREMAINTHDDCH","LDBDRDLOADREMAINTHDHSDPA","LDBDRDOFFSETDCH","LDBDRDOFFSETHSDPA","LDBDRDSWITCHDCH","LDBDRDSWITCHHSDPA","LDBDRDTOTALPWRPROTHD",
 				"LOGICRNCID","MBDRDBASEDGRIDSWITCH","PATHLOSSTHDFORCENTER","PATHLOSSTHDFOREDGE","POWLOADDRDOPTSWITCH","PWRTHDFORRRCDRDPRECAC","REDIRBANDIND","RESCONGDRDOPTSWITCH","RRCREDIRCONSIDERBARSWITCH",
 				"SECCELLLDBDRDCHOICE","SECCELLREFBHFLAGSWITCH","SERVICEDIFFDRDSWITCH","TRAFFTYPEFORBASEDUELOC","UELOCBASEDDRDFORC2DSWITCH","ULCETHDFORRRCDRDPRECAC","ULLDBDRDLOADREMAINTHDDCHSDPA",
 				"ULLDBDRDOFFSETDCHSDPA","ULLDBDRDSWITCHDCHSDPA","Fecha", "Red", "ipEntrada"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUEXT2GCELL(){
-		String[] aParametrosCabecera={"RNC_SOURCE","GSMCELLINDEX","GSMCELLNAME","MCC","MNC","RAC","CNOPGRPINDEX","LAC","CFGRACIND","CID","NCC","BCC","BCCHARFCN","BANDIND","RATCELLTYPE","USEOFHCS",
+		String[] aParametrosABuscar={"RNC_SOURCE","GSMCELLINDEX","GSMCELLNAME","MCC","MNC","RAC","CNOPGRPINDEX","LAC","CFGRACIND","CID","NCC","BCC","BCCHARFCN","BANDIND","RATCELLTYPE","USEOFHCS",
 				"NCMODE","SUPPRIMFLAG","SUPPPSHOFLAG","CIO","NBSCINDEX","LDPRDRPRTSWITCH","Fecha", "Red", "ipEntrada","GSMVOICEWEAKRXLEVTHLD","HCSPRIO","LOGICRNCID","QHCS","TCH1ARFCN","TCH2ARFCN",
 				"TCH3ARFCN","TCH4ARFCN","TCH5ARFCN","TCH6ARFCN"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUEXT3GCELL(){
-		String[] aParametrosCabecera={"RNC_SOURCE","CELLID","CELLNAME","CELLHOSTTYPE","UARFCNUPLINKIND","UARFCNUPLINK","UARFCNDOWNLINK","CFGRACIND","RAC","QQUALMININD","QQUALMIN","QRXLEVMININD",
+		String[] aParametrosABuscar={"RNC_SOURCE","CELLID","CELLNAME","CELLHOSTTYPE","UARFCNUPLINKIND","UARFCNUPLINK","UARFCNDOWNLINK","CFGRACIND","RAC","QQUALMININD","QQUALMIN","QRXLEVMININD",
 				"QRXLEVMIN","QRXLEVMINEXTSUP","MAXALLOWEDULTXPOWERIND","MAXALLOWEDULTXPOWER","CNOPGRPINDEX","PSCRAMBCODE","BANDIND","TXDIVERSITYIND","LAC","MIDRATERLACTTIMEDEFOFFVAL",
 				"HIGHRATERLACTTIMEDEFOFFVAL","OAMGUARDVALFORLOWRATE","OAMGUARDVALFORMIDRATE","OAMGUARDVALFORHIGHRATE","ACTTIMEDEFOFFVALFORUNCELLNOH","ACTTIMEDEFOFFVALFORUNCELLH",
 				"ACTTIMEDEFOFFVALFORSAMECELL","USEOFHCS","SUPPDPCMODECHGFLAG","CELLCAPCONTAINERFDD","OVERLAYMOBILITYFLAG","HARQPREACAP","CIO","EFACHSUPIND","APFLAG","VPLIMITIND","STTDSUPIND","CP1SUPIND",
 				"DPCHDIVMODFOROTHER","DPCHDIVMODFORMIMO","FDPCHDIVMODFORMIMO","FDPCHDIVMODFOROTHER","DIVMODFORDCHSDPA","Fecha", "Red", "ipEntrada","ACTTIMEDEFOFFVALFORUNCELLNOH","ALLSERVICELIMITIND",
 				"CELLCOVERAGETYPE","DYNCESUPIND","FASTHSCCACTTIMEDEFOFFVAL","HCSPRIO","LOGICRNCID","MOVEUSERPSLIMITIND","QHCS","SPLITIND"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUHOCOMM(){
-		String[] aParametrosCabecera={"COEXISTMEASTHDCHOICE","COVBASEDGULMEASMODE","CSHOPRIOMEASTIMERLEN","CSIFFASTMULRLSETUPSWITCH","DIVCTRLFIELD","DRNCSHOINITPWRPO","HSPATIMERLEN",
+		String[] aParametrosABuscar={"COEXISTMEASTHDCHOICE","COVBASEDGULMEASMODE","CSHOPRIOMEASTIMERLEN","CSIFFASTMULRLSETUPSWITCH","DIVCTRLFIELD","DRNCSHOINITPWRPO","HSPATIMERLEN",
 				"IFANTIPINGPANGTIMERLENGTH","IFFASTMULRLSETUPDLTPCPAT","IFFASTMULRLSETUPRELTHR","IFTHENGSMMEATYPSWITCH","IUBRLFAILSUSPSHODELTMR","LOGICRNCID","MACROMICRO1APREMEASSWITCH",
 				"MAXEDCHCELLINACTIVESET","PENALTYTIMERFORCMFAILCOV","PSHOPRIOMEASTIMERLEN","PSIFFASTMULRLSETUPSWITCH","RELOCPREFAILPENALTYTIMER","RELOCPREPFAILSELECTSWITCH","REPORTINTERVALFOR1APRE",
 				"RXTXLOWERTHD","RXTXUPPERTHD","SFNOBSTDDEFVALIDTIME","SPECUSERCSTHD2DECN0","SPECUSERCSTHD2DRSCP","SPECUSERCSTHD2FECN0","SPECUSERCSTHD2FRSCP","SPECUSERHYSTFOR2D","T322FORLOADBALANCE",
 				"U2LBLINDREDIRPINGPONGTIMER","UERELSUPIFFASTMULRL","WEAKCOVHSPAQUALTHDS","Fecha", "Red", "ipEntrada","ICRUEINTERFREQMBDRECN0THLD","ICRUEINTERFREQMBDRRSCPTHLD","SECFREQHOINTERFREQMEASTIME",
 				"SECFREQHOONLINETIMETHD","SECFREQHOQUARELTHD","SECFREQHOUSERRATETHD"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUINTERFREQHOCOV(){
-		String[] aParametrosCabecera={"HHOECNOMIN","HHORSCPMIN","HYSTFOR2D","HYSTFOR2F","HYSTFORPRDINTERFREQ","IFHOFAILNUM","IFHOPINGPONGTIMER","INTERFREQCSTHD2DECN0","INTERFREQCSTHD2DRSCP",
+		String[] aParametrosABuscar={"HHOECNOMIN","HHORSCPMIN","HYSTFOR2D","HYSTFOR2F","HYSTFORPRDINTERFREQ","IFHOFAILNUM","IFHOPINGPONGTIMER","INTERFREQCSTHD2DECN0","INTERFREQCSTHD2DRSCP",
 				"INTERFREQCSTHD2FECN0","INTERFREQCSTHD2FRSCP","INTERFREQFILTERCOEF","INTERFREQHO2DEVENTTYPE","INTERFREQHTHD2DECN0","INTERFREQHTHD2DRSCP","INTERFREQHTHD2FECN0","INTERFREQHTHD2FRSCP","INTERFREQMCMODE",
 				"INTERFREQMEASTIME","INTERFREQR99PSTHD2DECN0","INTERFREQR99PSTHD2DRSCP","INTERFREQR99PSTHD2FECN0","INTERFREQR99PSTHD2FRSCP","INTERFREQREPORTMODE","LOGICRNCID","PENALTYTIMERFORIFHOFAIL","PRDREPORTINTERVAL",
 				"TARGETFREQCSTHDECN0","TARGETFREQCSTHDRSCP","TARGETFREQHTHDECN0","TARGETFREQHTHDRSCP","TARGETFREQR99PSTHDECN0","TARGETFREQR99PSTHDRSCP","TIMETOINTERFREQHO","TIMETOTRIG2D","TIMETOTRIG2F",
 				"TIMETOTRIGFORPRDINTERFREQ","UEPENALTYTIMERFORIFHOFAIL","USEDFREQCSTHDECN0","USEDFREQCSTHDRSCP","USEDFREQHTHDECN0","USEDFREQHTHDRSCP","USEDFREQLOWERTHDECNO","USEDFREQR99PSTHDECN0","USEDFREQR99PSTHDRSCP",
 				"USEDFREQUPPERTHDECNO","WEIGHTFORUSEDFREQ","Fecha", "Red", "ipEntrada"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUINTERFREQNCELL(){
-		String[] aParametrosCabecera={"RNCID","CELLID","NCELLRNCID","NCELLID","BLINDHOFLAG","BLINDHOQUALITYCONDITION","NPRIOFLAG","NPRIO","CIOOFFSET","SIB11IND","IDLEQOFFSET1SN","IDLEQOFFSET2SN","SIB12IND",
+		String[] aParametrosABuscar={"RNCID","CELLID","NCELLRNCID","NCELLID","BLINDHOFLAG","BLINDHOQUALITYCONDITION","NPRIOFLAG","NPRIO","CIOOFFSET","SIB11IND","IDLEQOFFSET1SN","IDLEQOFFSET2SN","SIB12IND",
 				"CONNQOFFSET1SN","CONNQOFFSET2SN","TPENALTYHCSRESELECT","HOCOVPRIO","DRDECN0THRESHHOLD","MBDRFLAG","MBDRPRIO","DRDORLDRFLAG","INTERFREQADJSQHCS","INTERNCELLQUALREQFLAG","QQUALMIN","QRXLEVMIN","CLBFLAG",
 				"CLBPRIO","UARFCNDOWNLINK_CELL","PSCRAMBCODE_CELL","UARFCNDOWNLINK_NCELL","PSCRAMBCODE_NCELL","Fecha", "Red", "ipEntrada",
 				"DRDTARGETULCOVERLIMITTHD","DYNCELLSHUTDOWNFLAG","NCELLCAPCONTAINER","TEMPOFFSET1","TEMPOFFSET2","UINTERNCELLSRC"};
-		return aParametrosCabecera;
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUINTERRATHOCOV(){
-		String[] aParametrosCabecera={};
-		return aParametrosCabecera;
+		String[] aParametrosABuscar={"BSICVERIFY","CSBSICVERIFYINDICATION","FILTERCOEFOF2D2F","HYSTFOR2D","HYSTFOR2F","HYSTFORINTERRAT","INTERRATCSTHD2DECN0","INTERRATCSTHD2DRSCP",
+				"INTERRATCSTHD2FECN0","INTERRATCSTHD2FRSCP","INTERRATFILTERCOEF","INTERRATHO2DEVENTTYPE","INTERRATHTHD2DECN0","INTERRATHTHD2DRSCP","INTERRATHTHD2FECN0","INTERRATHTHD2FRSCP","INTERRATMEASTIME",
+				"INTERRATPERIODREPORTINTERVAL","INTERRATPHYCHFAILNUM","INTERRATPINGPONGHYST","INTERRATPINGPONGTIMER","INTERRATR99PSTHD2DECN0","INTERRATR99PSTHD2DRSCP","INTERRATR99PSTHD2FECN0",
+				"INTERRATR99PSTHD2FRSCP","INTERRATREPORTMODE","LOGICRNCID","PENALTYTIMEFORPHYCHFAIL","PSBSICVERIFYINDICATION","TARGETRATCSTHD","TARGETRATHTHD","TARGETRATR99PSTHD","TIMETOTRIGFORNONVERIFY",
+				"TIMETOTRIGFORVERIFY","TRIGTIME2D","TRIGTIME2F","USEDIRATHOLOWERTHDECNO","USEDIRATHOUPPERTHDECNO","WEIGHTFORUSEDFREQ","Fecha", "Red", "ipEntrada","INTERRATCOVPENALTYTIME"};
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUINTRAFREQNCELL(){
-		String[] aParametrosCabecera={};
-		return aParametrosCabecera;
+		String[] aParametrosABuscar={"RNCID","CELLID","NCELLRNCID","NCELLID","IDLEQOFFSET1SN","IDLEQOFFSET2SN","NPRIOFLAG","CIOOFFSET","CELLSFORBIDDEN1A","CELLSFORBIDDEN1B","SIB11IND",
+				"SIB12IND","TPENALTYHCSRESELECT","MBMSNCELLIND","CONNQOFFSET1SN","CONNQOFFSET2SN","CELLNAME-NCELLNAME","UARFCNDOWNLINK_CELL","PSCRAMBCODE_CELL","UARFCNDOWNLINK_NCELL","PSCRAMBCODE_NCELL",
+				"Fecha", "Red", "ipEntrada","DYNCELLSHUTDOWNFLAG","NCELLCAPCONTAINER","NPRIO","TEMPOFFSET1","TEMPOFFSET2","UINTRANCELLSRC"};
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarULAC(){
-		String[] aParametrosCabecera={};
-		return aParametrosCabecera;
+		String[] aParametrosABuscar={"CNOPINDEX","LAC","PLMNVALTAGMAX","PLMNVALTAGMIN","Fecha", "Red", "ipEntrada","LOGICRNCID"};
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarULOCELL(){
-		String[] aParametrosCabecera={};
-		return aParametrosCabecera;
+		String[] aParametrosABuscar={"RNCID","NODEBID","LOCELL","LOGICRNCID","Fecha", "Red", "ipEntrada"};
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarULTECELL(){
-		String[] aParametrosCabecera={};
-		return aParametrosCabecera;
+		String[] aParametrosABuscar={"LTECELLINDEX","LTECELLNAME","MCC","MNC","TAC","CNOPGRPINDEX","CELLPHYID","LTEBAND","LTEARFCN","SUPPPSHOFLAG","EUTRANCELLID","BLACKFLAG","Fecha", "Red",
+				"ipEntrada","LOGICRNCID","SLAVEBANDINDICATOR","U2LRIMCNOPERATORRTINDEX"};
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarULTENCELL(){
-		String[] aParametrosCabecera={};
-		return aParametrosCabecera;
+		String[] aParametrosABuscar={"RNCID","CELLID","LTECELLINDEX","BLINDFLAG","ULTENCELLSRC","Fecha", "Red","ipEntrada"};
+		return aParametrosABuscar;
+	}
+	private static String[] retornaParametrosABuscarUNODEB(){
+		String[] aParametrosABuscar={"NODEBNAME","NODEBID","ACTSTATUS","AUTOHOMINGFLAG","CNOPINDEX","DSSFLAG","HOSTTYPE","IPTRANSAPARTIND","IUBFLEXFLAG","LOGICRNCID","NODEBAUTOREDUNDANCYFLAG",
+				"NODEBPROTCLVER","NODEBTRACESWITCH","RSCMNGMODE","SATELLITEIND","SHARINGTYPE","SIGNALCREATETYPE","SN","SRN","SSN","TNLBEARERTYPE","TRANSDELAY","Fecha","Red","ipEntrada"};
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUNODEBLDR(){
-		String[] aParametrosCabecera={};
-		return aParametrosCabecera;
+		String[] aParametrosABuscar={};
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUNRNC(){
-		String[] aParametrosCabecera={};
-		return aParametrosCabecera;
+		String[] aParametrosABuscar={};
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarUPCPICH(){
-		String[] aParametrosCabecera={};
-		return aParametrosCabecera;
+		String[] aParametrosABuscar={};
+		return aParametrosABuscar;
 	}
 	private static String[] retornaParametrosABuscarURAC(){
-		String[] aParametrosCabecera={};
-		return aParametrosCabecera;
+		String[] aParametrosABuscar={};
+		return aParametrosABuscar;
 	}
 	
 	private static TreeMap<String, Integer> retornaMapaCabecera(String sCabeceraFichero) {
@@ -1339,45 +1521,7 @@ public class Adaptacion3G {
 
 		return mapaCabecera;
 	}
-	
-//	private static void comprobarCoincidencias(){
-//		ArrayList<String> faltanEnSalidaYEstanEnLaEntrada = new ArrayList<String>();
-//		ArrayList<String> faltanEnEntradaYEstanEnLaSalida = new ArrayList<String>();
-//		String[] entrada ={"RNC_SOURCE","RNCID","CELLID","GSMCELLINDEX","BLINDHOFLAG","BLINDHOPRIO","NPRIOFLAG","NPRIO","CIOOFFSET","QOFFSET1SN","QRXLEVMIN","TPENALTYHCSRESELECT","TEMPOFFSET1","DRDECN0THRESHHOLD","SIB11IND","SIB12IND","MBDRFLAG","MBDRPRIO","SRVCCSWITCH","INTERRATADJSQHCS","NIRATOVERLAP","CELLNAME","GSMCELLNAME","CELLNAME-NCELLNAME"};
-//		String[] salida ={"ACTSTATUS","BANDIND","BLKSTATUS","CCHCNOPINDEX","CELLCOVERAGETYPE","CELLHETFLAG","CELLID","CELLNAME","CFGRACIND","CIO","CNOPGRPINDEX","DLTPCPATTERN01COUNT","DPGID","DSSFLAG","DSSSMALLCOVMAXTXPOWER","Fecha","LAC","LOCELL","LOGICRNCID","MAXTXPOWER","NEEDSELFPLANFLAG","NEID","NINSYNCIND","NODEBNAME","NOUTSYNCIND","PRIORITY","PSCRAMBCODE","RAC","REMARK","Red","SAC","SN","SPGID","SPLITCELLIND","SRN","SSN","TCELL","TIMER","TRLFAILURE","TXDIVERSITYIND","UARFCNDOWNLINK","UARFCNUPLINK","UARFCNUPLINKIND","VPLIMITIND","ipEntrada"};
-//		
-//		for(String parametroEntrada : entrada){
-//			boolean bandera=false;
-//			for(String parametroEnSalida : salida){
-//				if(parametroEntrada.equalsIgnoreCase(parametroEnSalida)){
-//					bandera=true;
-//				}	
-//			}
-//			if(bandera==false){
-//				faltanEnEntradaYEstanEnLaSalida.add(parametroEntrada);
-//			}
-//		}
-//		for(String parametroEnSalida : entrada){
-//			boolean bandera=false;
-//			for(String parametroEntrada : salida){
-//				if(parametroEnSalida.equalsIgnoreCase(parametroEntrada)){
-//					bandera=true;
-//				}	
-//			}
-//			if(bandera==false){
-//				faltanEnEntradaYEstanEnLaSalida.add(parametroEnSalida);
-//			}
-//		}
-//		System.out.println("Los siguientes parámetros NO salida SÍ entrada: ");
-//		for(String parametro : faltanEnSalidaYEstanEnLaEntrada){
-//			System.out.println(parametro);
-//		}
-//		System.out.println("Los siguientes parámetros SÍ salida NO entrada: ");
-//		for(String parametro : faltanEnEntradaYEstanEnLaSalida){
-//			System.out.println(parametro);
-//		}
-//	}
-//	
+
 	
 	
 }
