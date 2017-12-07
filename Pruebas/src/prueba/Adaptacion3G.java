@@ -794,8 +794,9 @@ public class Adaptacion3G {
 		} catch (FileNotFoundException e) {
 			System.out.println("File not found exception en escribe fichero GSM");
 		} catch (IOException e) {
-			System.out.println("IO exception en escribe fichero GSM");
+			System.out.println("IO EXZ en escribe fichero GSM");
 		}
+		
 		
 	}
 	
